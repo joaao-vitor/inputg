@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
 
-export function AvatarDropdown() {
+export function AvatarDropdown({ size }: { size?: "default" | "sm" | "lg" }) {
   const { data: session } = authClient.useSession();
   if (!session) {
     return null;
@@ -22,14 +22,14 @@ export function AvatarDropdown() {
 
   const signOut = async () => {
     await authClient.signOut();
-  }
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
           <Button variant="ghost" size="icon" className="rounded-full">
-            <Avatar>
+            <Avatar size={size}>
               <AvatarImage
                 src={session.user.image || undefined}
                 alt={session.user.name}

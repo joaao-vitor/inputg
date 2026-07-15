@@ -20,10 +20,20 @@ import { SignDialog } from "./auth/sign-dialog";
 import { authClient } from "@/lib/auth-client";
 import { AvatarDropdown } from "./avatar-dropdown";
 import { SignTypes, useAuthDialogStore } from "@/store/useAuthDialogStore";
+import { Menu } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
+import { Separator } from "../ui/separator";
+import { SearchBar } from "./searchbar";
+
+
 
 export const Navbar = () => {
-  const [searchValue, setSearchValue] = useState("");
-
   const { onSignTypeChange, openDialog } = useAuthDialogStore();
 
   const openSignDialog = (type: SignTypes) => {
@@ -43,29 +53,9 @@ export const Navbar = () => {
                 INPUT<span className="text-emerald-700">G</span>
               </h1>
             </div>
-            <div className="self-end flex items-center gap-4">
-              <Command className="relative">
-                <CommandInput
-                  placeholder="Search for a game..."
-                  value={searchValue}
-                  onValueChange={setSearchValue}
-                  className="w-72"
-                />
-                {searchValue && (
-                  <CommandList>
-                    <CommandList>
-                      <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
-
-                      <CommandGroup heading="Sugestões">
-                        <CommandItem>Minha Conta</CommandItem>
-                        <CommandItem>Projetos</CommandItem>
-                        <CommandItem>Configurações</CommandItem>
-                      </CommandGroup>
-                    </CommandList>
-                  </CommandList>
-                )}
-              </Command>
-              <div>
+            <div className="hidden self-end md:flex items-center gap-4">
+              <SearchBar />
+              <div className="flex items-center">
                 <NavigationMenu>
                   <NavigationMenuList className={"gap-3"}>
                     <NavigationMenuItem>
@@ -103,6 +93,49 @@ export const Navbar = () => {
                   </NavigationMenuList>
                 </NavigationMenu>
               </div>
+            </div>
+            <div className="block md:hidden">
+              <Sheet>
+                <SheetTrigger>
+                  <Menu />
+                </SheetTrigger>
+                <SheetContent className={"h-full"}>
+                  <SheetHeader>
+                    <SheetTitle>Menu</SheetTitle>
+                  </SheetHeader>
+                  <div className="flex flex-col gap-4 px-4 py-4 h-full">
+                    <Link href="/games" className="font-bold">
+                      GAMES
+                    </Link>
+
+                    <SearchBar />
+                    <Separator />
+                    {!session ? (
+                      <div className="grow flex flex-col justify-end gap-2">
+                        <Button
+                          className={"w-full"}
+                          size={"lg"}
+                          onClick={() => openSignDialog(SignTypes.SIGNIN)}
+                        >
+                          Sign-In
+                        </Button>
+                        <Button
+                          className={"w-full"}
+                          size={"lg"}
+                          variant={"secondary"}
+                          onClick={() => openSignDialog(SignTypes.SIGNUP)}
+                        >
+                          Create Account
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="grow flex flex-col justify-end gap-2 self-end">
+                        <AvatarDropdown size="lg" />
+                      </div>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
         </div>
