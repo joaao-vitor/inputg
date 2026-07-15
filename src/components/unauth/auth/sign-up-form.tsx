@@ -14,19 +14,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AtSign, Lock, Mail } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { SignTypes } from "./sign-dialog";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { SocialAuth } from "./social-auth";
 import { Spinner } from "@/components/ui/spinner";
+import { SignTypes, useAuthDialogStore } from "@/store/useAuthDialogStore";
 
-export const SignUpForm = ({
-  changeSignType,
-  onSuccess,
-}: {
-  changeSignType: (signType: SignTypes) => void;
-  onSuccess: () => void;
-}) => {
+export const SignUpForm = ({ onSuccess }: { onSuccess: () => void }) => {
+  const { onSignTypeChange } = useAuthDialogStore();
+
   const schema = z
     .object({
       username: z
@@ -208,7 +204,7 @@ export const SignUpForm = ({
             type="button"
             variant={"link"}
             size={"lg"}
-            onClick={() => changeSignType(SignTypes.SIGNIN)}
+            onClick={() => onSignTypeChange(SignTypes.SIGNIN)}
           >
             Already have an account? Sign in
           </Button>
