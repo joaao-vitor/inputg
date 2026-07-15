@@ -41,17 +41,16 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      console.log("Sending verification email to:", user.email);
       try {
-        const response = await resend.emails.send({
+        await resend.emails.send({
           to: user.email,
           from: "Acme <onboarding@resend.dev>",
           subject: "[INPUTG] Verify your email address",
           html: `<p>Click the link below to verify your email address:</p><p><a href="${url}">${url}</a></p>`,
         });
-        console.log(response);
       } catch (error) {
         console.error("Error sending verification email:", error);
+        throw error;
       }
     },
     sendOnSignUp: true,
