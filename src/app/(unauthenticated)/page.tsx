@@ -1,5 +1,9 @@
+import { Hero } from "./(home)/_components/hero";
+
 export default function Page() {
   return (
-    <><h1> Oiee</h1></>
-  )
+    <div className="w-full h-full flex justify-center">
+        <Hero />
+    </div>
+  );
 }
