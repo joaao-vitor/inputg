@@ -3,6 +3,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/provider/theme-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -18,12 +19,20 @@ export default function RootLayout({
 }>) {
   return (
     <html
+    suppressHydrationWarning
       lang="en"
       className={cn("h-full", "antialiased", "font-sans", inter.variable)}
     >
       <body className="h-full flex flex-col">
-        {children}
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
