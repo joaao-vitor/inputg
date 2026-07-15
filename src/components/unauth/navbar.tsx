@@ -16,26 +16,26 @@ import {
   CommandList,
 } from "../ui/command";
 import { useState } from "react";
-import { SignDialog, SignTypes } from "./auth/sign-dialog";
+import { SignDialog } from "./auth/sign-dialog";
 import { authClient } from "@/lib/auth-client";
 import { AvatarDropdown } from "./avatar-dropdown";
+import { SignTypes, useAuthDialogStore } from "@/store/useAuthDialogStore";
 
 export const Navbar = () => {
   const [searchValue, setSearchValue] = useState("");
-  const [signOpen, setSignOpen] = useState(false);
 
-  const [signType, setSignType] = useState<SignTypes>(SignTypes.SIGNIN);
+  const { onSignTypeChange, openDialog } = useAuthDialogStore();
 
   const openSignDialog = (type: SignTypes) => {
-    setSignType(type);
-    setSignOpen(true);
+    onSignTypeChange(type);
+    openDialog();
   };
 
   const { data: session } = authClient.useSession();
 
   return (
     <>
-      <nav className="w-full flex justify-center">
+      <nav className="w-full flex justify-center fixed top-0 left-0 right-0 z-50 bg-linear-to-b from-background to-transparent backdrop-blur-md ">
         <div className="container flex p-6">
           <div className="flex gap-4 w-full justify-between">
             <div>
@@ -107,12 +107,7 @@ export const Navbar = () => {
           </div>
         </div>
       </nav>
-      <SignDialog
-        open={signOpen}
-        onOpenChange={setSignOpen}
-        signType={signType}
-        onSignTypeChange={setSignType}
-      />
+      <SignDialog />
     </>
   );
 };
