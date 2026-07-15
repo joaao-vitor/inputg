@@ -7,7 +7,7 @@ export const Hero = () => {
   const { openDialog, onSignTypeChange } = useAuthDialogStore();
 
   return (
-    <section className="relative w-full max-h-[85vh] sm:max-h-[80vh] flex items-center justify-center overflow-hidden">
+    <section className="relative w-full pt-24 flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
           src="/hero.png"
