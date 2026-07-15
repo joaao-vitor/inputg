@@ -16,19 +16,17 @@ import {
 } from "@/components/ui/input-group";
 import { Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SignTypes } from "./sign-dialog";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { SocialAuth } from "./social-auth";
 import { Spinner } from "@/components/ui/spinner";
+import { SignTypes, useAuthDialogStore } from "@/store/useAuthDialogStore";
 
-export const SignInForm = ({
-  changeSignType,
-  onSuccess,
-}: {
-  changeSignType: (signType: SignTypes) => void;
-  onSuccess: () => void;
-}) => {
+export const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
+  const {
+    onSignTypeChange
+  } = useAuthDialogStore();
+
   const schema = z.object({
     email: z.email({ message: "Insert a valid email address" }),
     password: z.string(),
@@ -131,7 +129,7 @@ export const SignInForm = ({
             variant={"link"}
             size={"lg"}
             className={"font-light"}
-            onClick={() => changeSignType(SignTypes.SIGNUP)}
+            onClick={() => onSignTypeChange(SignTypes.SIGNUP)}
           >
             Create a new account
           </Button>

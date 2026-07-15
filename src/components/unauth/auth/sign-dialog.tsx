@@ -3,24 +3,11 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { SignInForm } from "./sign-in-form";
 import { SignUpForm } from "./sign-up-form";
 import { authClient } from "@/lib/auth-client";
+import { SignTypes, useAuthDialogStore } from "@/store/useAuthDialogStore";
 
-export enum SignTypes {
-  SIGNIN,
-  SIGNUP,
-}
-
-export const SignDialog = ({
-  open,
-  onOpenChange,
-  signType,
-  onSignTypeChange,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  signType: SignTypes;
-  onSignTypeChange: (signType: SignTypes) => void;
-}) => {
+export const SignDialog = () => {
   const { data: session } = authClient.useSession();
+  const { isOpen: open, onOpenChange, signType } = useAuthDialogStore();
   if (session) return null;
 
   return (
@@ -41,15 +28,9 @@ export const SignDialog = ({
           </div>
         </DialogHeader>
         {signType === SignTypes.SIGNIN ? (
-          <SignInForm
-            changeSignType={onSignTypeChange}
-            onSuccess={() => onOpenChange(false)}
-          />
+          <SignInForm onSuccess={() => onOpenChange(false)} />
         ) : (
-          <SignUpForm
-            changeSignType={onSignTypeChange}
-            onSuccess={() => onOpenChange(false)}
-          />
+          <SignUpForm onSuccess={() => onOpenChange(false)} />
         )}
       </DialogContent>
     </Dialog>
