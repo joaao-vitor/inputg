@@ -7,15 +7,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "../ui/command";
-import { useState } from "react";
 import { SignDialog } from "./auth/sign-dialog";
 import { authClient } from "@/lib/auth-client";
 import { AvatarDropdown } from "./avatar-dropdown";
