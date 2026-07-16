@@ -6,10 +6,10 @@ export default function Page() {
   return (
     <div className="w-full flex flex-col justify-center">
       <Hero />
-      <div className="container mx-auto">
+      <main className="container mx-auto">
         <PopularGames />
         <PopularReviews />
-      </div>
+      </main>
     </div>
   );
 }
