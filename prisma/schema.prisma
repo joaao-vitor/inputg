@@ -77,3 +77,51 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+model Game {
+  id           String    @id @default(uuid())
+  name         String
+  releaseDate  DateTime?
+  summary      String?
+  slug         String    @unique
+  igdbId       Int       @unique
+  igdbImageId  String?
+  igdbGameType String?
+
+  versionParentId String?
+
+  versionParent Game?  @relation("GameVersionParent", fields: [versionParentId], references: [id])
+  childVersions Game[] @relation("GameVersionParent")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  genres    Genre[]
+  platforms Platform[]
+
+  @@map("game")
+}
+
+model Genre {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  games Game[]
+
+  @@map("genre")
+}
+
+model Platform {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  games Game[]
+
+  @@map("platform")
+}
