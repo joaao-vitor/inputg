@@ -19,4 +19,7 @@ export interface IGDBGame {
     name: string;
     slug: string;
   }[];
+  screenshots?: {
+    image_id: string;
+  }[];
 }
