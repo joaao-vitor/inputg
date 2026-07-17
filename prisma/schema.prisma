@@ -78,15 +78,13 @@ model Verification {
   @@map("verification")
 }
 
-
 model Game {
-  id           String    @id
-  title        String
-  description  String?
+  id           String    @id @default(uuid())
+  name         String
   releaseDate  DateTime?
   summary      String?
   slug         String    @unique
-  igdbId       Int
+  igdbId       Int       @unique
   igdbImageId  String?
   igdbGameType String?
 
@@ -105,7 +103,7 @@ model Game {
 }
 
 model Genre {
-  id        String   @id
+  id        String   @id @default(uuid())
   name      String
   slug      String   @unique
   createdAt DateTime @default(now())
@@ -117,7 +115,7 @@ model Genre {
 }
 
 model Platform {
-  id        String   @id
+  id        String   @id @default(uuid())
   name      String
   slug      String   @unique
   createdAt DateTime @default(now())
