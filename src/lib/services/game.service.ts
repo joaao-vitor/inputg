@@ -11,7 +11,7 @@ const getGameFromIGDB = async (whereCondition: string) => {
       "games",
       `fields name, platforms.name, platforms.slug, \
      first_release_date, slug, summary, url, game_type, \
-     cover.image_id, genres.name, genres.slug, version_parent.id; \
+     cover.image_id, genres.name, genres.slug, version_parent.id, screenshots.image_id; \
      where ${whereCondition};`,
     )
   )[0];
@@ -20,7 +20,6 @@ const getGameFromIGDB = async (whereCondition: string) => {
 
   return igdbGame;
 };
-
 
 const upsertGame = async (igdbGame: IGDBGame, parentGame?: Game | null) => {
   return await prisma.game.upsert({
@@ -44,6 +43,8 @@ const upsertGame = async (igdbGame: IGDBGame, parentGame?: Game | null) => {
           },
         })),
       },
+      screenshotsIds:
+        igdbGame.screenshots?.map((screenshot) => screenshot.image_id) || [],
 
       igdbImageId: igdbGame.cover?.image_id || null,
     },
@@ -70,6 +71,8 @@ const upsertGame = async (igdbGame: IGDBGame, parentGame?: Game | null) => {
           create: { name: genre.name, slug: genre.slug },
         })),
       },
+      screenshotsIds:
+        igdbGame.screenshots?.map((screenshot) => screenshot.image_id) || [],
     },
   });
 };
