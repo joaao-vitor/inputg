@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { GameDetails } from "./_components/game-details";
+import GamePageWrapper from "./game-page";
 
 export default async function GamePage({
   params,
@@ -8,7 +8,7 @@ export default async function GamePage({
 }) {
   return (
     <Suspense fallback={<div>Loading game data...</div>}>
-      <GameDetails params={params} />
+      <GamePageWrapper params={params} />
     </Suspense>
   );
 }
