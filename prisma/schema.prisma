@@ -26,6 +26,8 @@ model User {
   username        String?
   displayUsername String?
 
+  userGames UserGame[]
+
   @@unique([email])
   @@map("user")
 }
@@ -101,6 +103,8 @@ model Game {
   genres    Genre[]
   platforms Platform[]
 
+  userGames UserGame[]
+
   @@map("game")
 }
 
@@ -126,4 +130,31 @@ model Platform {
   games Game[]
 
   @@map("platform")
+}
+
+enum GameStatus {
+  WANT_TO_PLAY
+  PLAYING
+  COMPLETED
+  ON_HOLD
+  ABANDONED
+}
+
+model UserGame {
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  status      GameStatus @default(WANT_TO_PLAY)
+  hoursPlayed Int?       @default(0)
+
+  liked Boolean @default(false)
+
+  userId String
+  gameId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, gameId])
+  @@map("user_game")
 }
