@@ -2,6 +2,7 @@ import { Game } from "@/generated/prisma/client";
 import prisma from "../prisma";
 import { fetchOnIGDB } from "./igdb.service";
 import { IGDBGame } from "@/types/igdb.types";
+import { GameWithRelations } from "@/types/game.types";
 
 const getGameFromIGDB = async (whereCondition: string) => {
   "use cache";
@@ -21,7 +22,10 @@ const getGameFromIGDB = async (whereCondition: string) => {
   return igdbGame;
 };
 
-const upsertGame = async (igdbGame: IGDBGame, parentGame?: Game | null) => {
+const upsertGame = async (
+  igdbGame: IGDBGame,
+  parentGame?: GameWithRelations | null,
+) => {
   return await prisma.game.upsert({
     where: { igdbId: igdbGame.id },
     update: {
@@ -74,14 +78,24 @@ const upsertGame = async (igdbGame: IGDBGame, parentGame?: Game | null) => {
       screenshotsIds:
         igdbGame.screenshots?.map((screenshot) => screenshot.image_id) || [],
     },
+    include: {
+      genres: true,
+      platforms: true,
+    },
   });
 };
 
-export const getGameBySlug = async (slug: string): Promise<Game | null> => {
+export const getGameBySlug = async (
+  slug: string,
+): Promise<GameWithRelations | null> => {
   "use cache";
 
-  let game: Game | null = await prisma.game.findUnique({
+  let game: GameWithRelations | null = await prisma.game.findUnique({
     where: { slug },
+    include: {
+      genres: true,
+      platforms: true,
+    },
   });
 
   if (!game) {
@@ -89,7 +103,7 @@ export const getGameBySlug = async (slug: string): Promise<Game | null> => {
 
     if (!igdbGame) return null;
 
-    let parentGame: Game | null = null;
+    let parentGame: GameWithRelations | null = null;
 
     if (igdbGame.version_parent?.id) {
       parentGame = await getGameByIGDBId(igdbGame.version_parent.id);
@@ -100,11 +114,17 @@ export const getGameBySlug = async (slug: string): Promise<Game | null> => {
   return game;
 };
 
-export const getGameByIGDBId = async (IGDBId: number): Promise<Game | null> => {
+export const getGameByIGDBId = async (
+  IGDBId: number,
+): Promise<GameWithRelations | null> => {
   "use cache";
 
-  let game: Game | null = await prisma.game.findUnique({
+  let game: GameWithRelations | null = await prisma.game.findUnique({
     where: { igdbId: IGDBId },
+    include: {
+      genres: true,
+      platforms: true,
+    },
   });
 
   if (!game) {
@@ -112,7 +132,7 @@ export const getGameByIGDBId = async (IGDBId: number): Promise<Game | null> => {
 
     if (!igdbGame) return null;
 
-    let parentGame: Game | null = null;
+    let parentGame: GameWithRelations | null = null;
     if (igdbGame.version_parent?.id) {
       parentGame = await getGameByIGDBId(igdbGame.version_parent.id);
     }

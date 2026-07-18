@@ -1,11 +1,5 @@
-import { getGameBySlug } from "@/lib/services/game.service";
 import { Suspense } from "react";
-
-async function GameDetails({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const game = await getGameBySlug(slug);
-  return <h1>{game?.name}</h1>;
-}
+import GamePageWrapper from "./game-page";
 
 export default async function GamePage({
   params,
@@ -14,7 +8,7 @@ export default async function GamePage({
 }) {
   return (
     <Suspense fallback={<div>Loading game data...</div>}>
-      <GameDetails params={params} />
+      <GamePageWrapper params={params} />
     </Suspense>
   );
 }
