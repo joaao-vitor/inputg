@@ -86,7 +86,7 @@ model Game {
   slug         String    @unique
   igdbId       Int       @unique
   igdbImageId  String?
-  igdbGameType String?
+  igdbGameType Int?
 
   screenshotsIds String[]
 

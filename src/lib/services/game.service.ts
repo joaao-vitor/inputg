@@ -1,4 +1,3 @@
-import { Game } from "@/generated/prisma/client";
 import prisma from "../prisma";
 import { fetchOnIGDB } from "./igdb.service";
 import { IGDBGame } from "@/types/igdb.types";

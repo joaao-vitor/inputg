@@ -4,7 +4,7 @@ export interface IGDBGame {
   slug: string;
   summary: string;
   first_release_date: number;
-  game_type: string;
+  game_type: number;
   cover?: {
     image_id: string;
   };
