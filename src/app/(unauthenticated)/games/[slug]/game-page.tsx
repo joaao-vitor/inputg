@@ -16,7 +16,7 @@ export default async function GamePageWrapper({
   }
 
   return (
-    <main className="flex flex-col items-center relative w-full h-full">
+    <div className="flex flex-col items-center relative">
       <div className="w-full h-[70vh] max-h-120 sticky">
         <Image
           src={`https://images.igdb.com/igdb/image/upload/t_1080p/${game.screenshotsIds[0]}.jpg`}
@@ -30,6 +30,6 @@ export default async function GamePageWrapper({
         <GameAside game={game} />
         <GameDetails game={game} />
       </div>
-    </main>
+    </div>
   );
 }
