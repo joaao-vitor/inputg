@@ -2,6 +2,7 @@ import prisma from "../prisma";
 import { fetchOnIGDB } from "./igdb.service";
 import { IGDBGame } from "@/types/igdb.types";
 import { GameWithRelations } from "@/types/game.types";
+import { GameStatus } from "@/generated/prisma/enums";
 
 const getGameFromIGDB = async (whereCondition: string) => {
   "use cache";
