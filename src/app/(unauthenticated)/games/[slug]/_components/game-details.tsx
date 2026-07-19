@@ -5,7 +5,7 @@ export const GameDetails = async ({ game }: { game: GameWithRelations }) => {
   if (!game) return <div>Game not found</div>;
   return (
     <div className="flex flex-col items-center md:flex-row gap-6 w-full">
-      <div className="flex flex-col h-full justify-end gap-8 w-full">
+      <div className="flex flex-col h-full mt-48 gap-4 w-full">
         <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6">
           <div className="mb-4 col-span-3">
             <h1 className="text-4xl font-bold font-mono text-center md:text-left mb-4">
@@ -16,7 +16,7 @@ export const GameDetails = async ({ game }: { game: GameWithRelations }) => {
             </h1>
             <p className="text-muted-foreground text-sm mt-2">{game.summary}</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-4 space-y-4 text-sm col-span-2 ">
+          <div className="grid grid-cols-1 sm:grid-cols-4 space-y-8 text-sm col-span-2 self-start items-start">
             <div className="col-span-1 ">
               <p className="uppercase text-muted-foreground font-semibold">
                 GENRES
