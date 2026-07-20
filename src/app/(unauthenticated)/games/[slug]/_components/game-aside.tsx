@@ -1,12 +1,11 @@
-import { Button } from "@/components/ui/button";
 import { GameWithRelations } from "@/types/game.types";
-import { Heart, Star } from "lucide-react";
 import Image from "next/image";
 import { SelectGameStatus } from "./select-status";
 import { getGameStatusByUserAndGame } from "@/lib/services/game-status.service";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { Suspense } from "react";
+import { GameRating } from "./game-rating";
+import { AsideSignInPrompt } from "./aside-sign-in-prompt";
 
 export const GameAside = async ({ game }: { game: GameWithRelations }) => {
   if (!game) return <div>Game not found</div>;
@@ -27,13 +26,22 @@ export const GameAside = async ({ game }: { game: GameWithRelations }) => {
           className="object-cover w-full h-full"
         />
       </div>
-      <div className="w-full pt-6 flex flex-col gap-4">
-        <SelectGameStatus
-          gameId={game.id}
-          defaultStatus={defaultGameStatus?.status}
-          isAuthenticated={!!session?.user}
-        />
-      </div>
+      {session?.user ? (
+        <div className="w-full pt-6 flex flex-col gap-4">
+          <SelectGameStatus
+            gameId={game.id}
+            defaultStatus={defaultGameStatus?.status}
+            isAuthenticated={!!session?.user}
+          />
+
+          <GameRating
+            gameId={game.id}
+            defaultRating={Number(defaultGameStatus?.rating) || 0}
+          />
+        </div>
+      ) : (
+        <AsideSignInPrompt />
+      )}
     </aside>
   );
 };
