@@ -24,6 +24,30 @@ export const upsertGameStatus = async (
   });
 };
 
+export const upsertGameRating = async (
+  userId: string,
+  gameId: string,
+  rating: number | null,
+) => {
+  await prisma.userGame.upsert({
+    where: {
+      userId_gameId: {
+        userId,
+        gameId,
+      },
+    },
+    create: {
+      status: GameStatus.COMPLETED,
+      rating,
+      userId,
+      gameId,
+    },
+    update: {
+      rating,
+    },
+  });
+};
+
 export const getGameStatusByUserAndGame = async (
   userId: string,
   gameId: string,
