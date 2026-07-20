@@ -10,6 +10,7 @@ interface StarRatingProps {
   onChange?: (rating: number) => void;
   readOnly?: boolean;
   clearable?: boolean;
+  onDelete?: () => void;
 }
 
 export const StarRating = ({
@@ -19,6 +20,7 @@ export const StarRating = ({
   onChange,
   readOnly = false,
   clearable = true,
+  onDelete,
 }: StarRatingProps) => {
   const [internalRating, setInternalRating] = useState(defaultValue);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
@@ -38,6 +40,7 @@ export const StarRating = ({
     if (readOnly) return;
     setInternalRating(0);
     if (onChange) onChange(0);
+    if (onDelete) onDelete();
   };
 
   return (
@@ -48,7 +51,7 @@ export const StarRating = ({
           onClick={handleClear}
           aria-label="Clear rating"
           title="clear rating"
-          className="absolute -left-6 cursor-pointer items-center justify-center rounded-full text-muted-foreground/60 transition-colors hover:text-foreground focus-visible:outline-none "
+          className="absolute -left-8 cursor-pointer items-center justify-center rounded-full text-muted-foreground/60 transition-colors hover:text-foreground focus-visible:outline-none "
         >
           <X className="h-4 w-4" />
         </button>
