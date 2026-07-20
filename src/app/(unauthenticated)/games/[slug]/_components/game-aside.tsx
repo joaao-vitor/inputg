@@ -17,31 +17,35 @@ export const GameAside = async ({ game }: { game: GameWithRelations }) => {
     : null;
 
   return (
-    <aside className="lg:sticky top-0 flex flex-col gap-6 lg:self-start justify-self-center">
-      <div className="relative aspect-3/4 w-48 shrink-0 rounded-xl overflow-hidden shadow-xl/50 shadow-emerald-900/30  self-center md:self-start">
-        <Image
-          src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.igdbImageId}.jpg`}
-          alt={game?.name}
-          fill
-          className="object-cover w-full h-full"
-        />
-      </div>
-      {session?.user ? (
-        <div className="w-full pt-6 flex flex-col gap-4">
-          <SelectGameStatus
-            gameId={game.id}
-            defaultStatus={defaultGameStatus?.status}
-            isAuthenticated={!!session?.user}
-          />
-
-          <GameRating
-            gameId={game.id}
-            defaultRating={Number(defaultGameStatus?.rating) || 0}
+    <aside className="lg:sticky top-0 flex flex-col lg:self-start justify-self-center">
+      <div className="flex w-48 flex-col self-center md:self-start">
+        <div className="relative aspect-3/4 w-full shrink-0 overflow-hidden rounded-xl shadow-xl/50 shadow-emerald-900/30">
+          <Image
+            src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.igdbImageId}.jpg`}
+            alt={game?.name}
+            fill
+            className="h-full w-full object-cover"
           />
         </div>
-      ) : (
-        <AsideSignInPrompt />
-      )}
+
+        {session?.user ? (
+          <div className="flex w-full flex-col gap-4 pt-6">
+            <SelectGameStatus
+              gameId={game.id}
+              defaultStatus={defaultGameStatus?.status}
+              isAuthenticated={!!session?.user}
+            />
+            <GameRating
+              gameId={game.id}
+              defaultRating={Number(defaultGameStatus?.rating) || 0}
+            />
+          </div>
+        ) : (
+          <div className="w-full pt-6">
+            <AsideSignInPrompt />
+          </div>
+        )}
+      </div>
     </aside>
   );
 };
