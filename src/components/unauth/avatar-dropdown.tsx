@@ -13,15 +13,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export function AvatarDropdown({ size }: { size?: "default" | "sm" | "lg" }) {
   const { data: session } = authClient.useSession();
+  const { refresh } = useRouter();
   if (!session) {
     return null;
   }
 
   const signOut = async () => {
     await authClient.signOut();
+    refresh();
   };
 
   return (
