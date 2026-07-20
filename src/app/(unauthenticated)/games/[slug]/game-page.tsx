@@ -2,6 +2,7 @@ import { getGameBySlug } from "@/lib/services/game.service";
 import { GameDetails } from "./_components/game-details";
 import Image from "next/image";
 import { GameAside } from "./_components/game-aside";
+import { GameReviews } from "./_components/game-reviews";
 
 export default async function GamePageWrapper({
   params,
@@ -28,7 +29,10 @@ export default async function GamePageWrapper({
       </div>
       <div className="flex flex-col container px-4 md:flex-row gap-6 -mt-64 md:-mt-48 z-2">
         <GameAside game={game} />
-        <GameDetails game={game} />
+        <div className="flex flex-col gap-2">
+          <GameDetails game={game} />
+          <GameReviews gameId={game.id} />
+        </div>
       </div>
     </div>
   );
