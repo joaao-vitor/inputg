@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { Star, X } from "lucide-react";
 import { useState } from "react";
 
@@ -44,20 +45,21 @@ export const StarRating = ({
   };
 
   return (
-    <div className="flex w-full items-center gap-2 relative">
+    <div className="flex w-full items-center gap-2">
       {clearable && !readOnly && currentRating > 0 && (
         <button
           type="button"
           onClick={handleClear}
           aria-label="Clear rating"
           title="clear rating"
-          className="absolute -left-8 cursor-pointer items-center justify-center rounded-full text-muted-foreground/60 transition-colors hover:text-foreground focus-visible:outline-none "
+          className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground/60 transition-colors hover:text-foreground focus-visible:outline-none"
         >
-          <X className="h-4 w-4" />
+          <X className="h-full w-full p-0.5" />
         </button>
       )}
+      
       <div
-        className="flex w-full items-center gap-1 sm:gap-2"
+        className="flex w-full items-center gap-[3%]"
         onMouseLeave={() => !readOnly && setHoverRating(null)}
         role={readOnly ? "img" : "group"}
         aria-label={`Star rating: ${activeRating} out of ${maxStars}`}
@@ -75,9 +77,9 @@ export const StarRating = ({
           return (
             <div
               key={starIndex}
-              className={`relative flex-1 aspect-square transition-transform duration-150 ${
-                !readOnly && "hover:scale-110"
-              }`}
+              className={cn("relative flex-1 min-w-0 aspect-square transition-transform duration-150", {
+                "hover:scale-110": !readOnly,
+              })}
             >
               {!readOnly && (
                 <button

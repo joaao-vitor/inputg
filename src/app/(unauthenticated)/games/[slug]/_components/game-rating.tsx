@@ -1,7 +1,6 @@
 "use client";
 import { StarRating } from "@/components/star-rating";
 import { changeGameRating } from "@/lib/actions/game/change-status";
-import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 
 export const GameRating = ({
@@ -31,7 +30,7 @@ export const GameRating = ({
   };
 
   return (
-    <div className="p-2 outline outline-muted-foreground/30 mt-2 bg-input/30 rounded-lg">
+    <div className="flex w-full items-center justify-center rounded-lg bg-input/30 p-2 mt-2 outline outline-muted-foreground/30">
       <StarRating
         onChange={handleRatingChange}
         defaultValue={defaultRating}
