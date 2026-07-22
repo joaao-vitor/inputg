@@ -10,3 +10,12 @@ export const reviewFormSchema = z.object({
   platformId: z.string().min(1, "Platform is required"),
   content: z.string().min(1, "Review content is required"),
 });
+
+export const reviewActionSchema = reviewFormSchema.extend({
+  gameId: z.string().min(1, "Game ID is required"),
+});
+
+export type ReviewFormData = z.infer<typeof reviewFormSchema>;
+export type ReviewActionSchema = z.infer<typeof reviewActionSchema>;
+
+export type CreateReviewDTO = ReviewActionSchema & { userId: string };

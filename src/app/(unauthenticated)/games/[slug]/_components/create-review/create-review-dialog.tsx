@@ -19,6 +19,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { UserGame } from "@/generated/prisma/client";
 import { GameStatus } from "@/generated/prisma/enums";
+import { sendReview } from "@/lib/actions/game/send-review";
 import { reviewFormSchema } from "@/schemas/create-review.schema";
 import { GameWithRelations } from "@/types/game.types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,6 +27,7 @@ import { Circle } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 export const CreateReviewDialog = ({
@@ -49,9 +51,10 @@ export const CreateReviewDialog = ({
   const { control, handleSubmit } = useForm<z.infer<typeof reviewFormSchema>>({
     resolver: zodResolver(reviewFormSchema),
     defaultValues: {
-      rating: Number(defaultGameStatus?.rating) || 0,
+      rating: defaultGameStatus?.rating || 0,
       gameStatus: defaultGameStatus?.status || GameStatus.COMPLETED,
       content: "",
+      platformId: "",
     },
   });
 
@@ -100,7 +103,15 @@ export const CreateReviewDialog = ({
     value: p.id,
   }));
 
-  const onSubmit = (data: z.infer<typeof reviewFormSchema>) => {};
+  const onSubmit = async (data: z.infer<typeof reviewFormSchema>) => {
+    try {
+      await sendReview({ gameId: game.id, ...data });
+      toast.success("Review created successfully!");
+      handleOpenChange(false);
+    } catch (error) {
+      toast.error(`Error creating review`);
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -154,7 +165,12 @@ export const CreateReviewDialog = ({
                       >
                         <FieldContent className="w-full">
                           <FieldLabel htmlFor="status">Status</FieldLabel>
-                          <Select {...field} items={statusSelect} id="status">
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            items={statusSelect}
+                            id="status"
+                          >
                             <SelectTrigger className={"w-full"}>
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
@@ -183,7 +199,12 @@ export const CreateReviewDialog = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
                       <FieldLabel htmlFor="platform">Platform</FieldLabel>
-                      <Select {...field} items={platformsSelect} id="platform">
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        items={platformsSelect}
+                        id="platform"
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Platform you played" />
                         </SelectTrigger>
