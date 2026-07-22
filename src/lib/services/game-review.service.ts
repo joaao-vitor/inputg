@@ -1,3 +1,4 @@
+import { ReviewWithRelations } from "@/types/review.types";
 import prisma from "../prisma";
 import { CreateReviewDTO } from "@/schemas/create-review.schema";
 
@@ -49,4 +50,38 @@ export const upsertReview = async ({
   ]);
 
   return review;
+};
+
+export const getReviewsByGameId = async (
+  gameId: string,
+): Promise<ReviewWithRelations[]> => {
+  const reviews = prisma.review.findMany({
+    where: {
+      gameId,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          image: true,
+        },
+      },
+      platform: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      userGame: {
+        select: {
+          liked: true,
+          status: true,
+          rating: true,
+        },
+      },
+    },
+  });
+  return reviews;
 };
