@@ -48,7 +48,11 @@ export const CreateReviewDialog = ({
     }
   };
 
-  const { control, handleSubmit } = useForm<z.infer<typeof reviewFormSchema>>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<z.infer<typeof reviewFormSchema>>({
     resolver: zodResolver(reviewFormSchema),
     defaultValues: {
       rating: defaultGameStatus?.rating || 0,
@@ -252,10 +256,13 @@ export const CreateReviewDialog = ({
                   variant={"secondary"}
                   type="button"
                   onClick={() => handleOpenChange(false)}
+                  disabled={isSubmitting}
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Confirm</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  Confirm
+                </Button>
               </div>
             </form>
           </div>
