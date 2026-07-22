@@ -27,6 +27,7 @@ model User {
   displayUsername String?
 
   userGames UserGame[]
+  reviews   Review[]
 
   @@unique([email])
   @@map("user")
@@ -104,6 +105,7 @@ model Game {
   platforms Platform[]
 
   userGames UserGame[]
+  reviews   Review[]
 
   @@map("game")
 }
@@ -127,7 +129,8 @@ model Platform {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  games Game[]
+  games   Game[]
+  reviews Review[]
 
   @@map("platform")
 }
@@ -147,7 +150,7 @@ model UserGame {
   status      GameStatus @default(WANT_TO_PLAY)
   hoursPlayed Int?       @default(0)
 
-  rating Decimal? @db.Decimal(2, 1)
+  rating Float? @default(0)
 
   liked Boolean @default(false)
 
@@ -156,7 +159,28 @@ model UserGame {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  review    Review?
 
   @@id([userId, gameId])
   @@map("user_game")
+}
+
+model Review {
+  id       String    @id @default(uuid())
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game     Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  content  String    @db.Text
+  platform Platform? @relation(fields: [platformId], references: [id], onDelete: SetNull)
+
+  userGame UserGame @relation(fields: [userId, gameId], references: [userId, gameId], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId     String
+  gameId     String
+  platformId String?
+
+  @@unique([userId, gameId])
+  @@map("review")
 }

@@ -37,7 +37,7 @@ export const GameAside = async ({ game }: { game: GameWithRelations }) => {
             />
             <GameRating
               gameId={game.id}
-              defaultRating={Number(defaultGameStatus?.rating) || 0}
+              defaultRating={defaultGameStatus?.rating || 0}
             />
           </div>
         ) : (
