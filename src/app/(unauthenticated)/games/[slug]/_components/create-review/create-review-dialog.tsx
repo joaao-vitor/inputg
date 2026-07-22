@@ -19,6 +19,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { UserGame } from "@/generated/prisma/client";
 import { GameStatus } from "@/generated/prisma/enums";
+import { reviewFormSchema } from "@/schemas/create-review.schema";
 import { GameWithRelations } from "@/types/game.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Circle } from "lucide-react";
@@ -45,20 +46,12 @@ export const CreateReviewDialog = ({
     }
   };
 
-  const schema = z.object({
-    rating: z
-      .number()
-      .min(0, "Rating must be at least 0")
-      .max(5, "Rating cannot exceed 5"),
-    gameStatus: z.enum(GameStatus),
-    platform: z.string().refine((v) => game.platforms.some((p) => p.id === v)),
-    content: z.string().min(1, "Review content is required"),
-  });
-
-  const { control, handleSubmit } = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+  const { control, handleSubmit } = useForm<z.infer<typeof reviewFormSchema>>({
+    resolver: zodResolver(reviewFormSchema),
     defaultValues: {
-      rating: 0,
+      rating: Number(defaultGameStatus?.rating) || 0,
+      gameStatus: defaultGameStatus?.status || GameStatus.COMPLETED,
+      content: "",
     },
   });
 
@@ -107,7 +100,7 @@ export const CreateReviewDialog = ({
     value: p.id,
   }));
 
-  const onSubmit = (data: z.infer<typeof schema>) => {};
+  const onSubmit = (data: z.infer<typeof reviewFormSchema>) => {};
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -161,14 +154,7 @@ export const CreateReviewDialog = ({
                       >
                         <FieldContent className="w-full">
                           <FieldLabel htmlFor="status">Status</FieldLabel>
-                          <Select
-                            {...field}
-                            items={statusSelect}
-                            defaultValue={
-                              defaultGameStatus?.status || GameStatus.COMPLETED
-                            }
-                            id="status"
-                          >
+                          <Select {...field} items={statusSelect} id="status">
                             <SelectTrigger className={"w-full"}>
                               <SelectValue placeholder="Select" />
                             </SelectTrigger>
@@ -192,7 +178,7 @@ export const CreateReviewDialog = ({
                   />
                 </div>
                 <Controller
-                  name="platform"
+                  name="platformId"
                   control={control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
