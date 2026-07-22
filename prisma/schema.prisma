@@ -150,7 +150,7 @@ model UserGame {
   status      GameStatus @default(WANT_TO_PLAY)
   hoursPlayed Int?       @default(0)
 
-  rating Decimal? @db.Decimal(2, 1)
+  rating Float? @default(0)
 
   liked Boolean @default(false)
 
