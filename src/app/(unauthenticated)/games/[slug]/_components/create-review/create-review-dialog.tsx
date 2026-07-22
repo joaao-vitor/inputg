@@ -25,10 +25,10 @@ import { GameWithRelations } from "@/types/game.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Circle } from "lucide-react";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import { parseAsBoolean, useQueryState } from "nuqs";
 
 export const CreateReviewDialog = ({
   game,
@@ -37,15 +37,13 @@ export const CreateReviewDialog = ({
   game: GameWithRelations;
   defaultGameStatus?: UserGame | null;
 }) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const isOpen = searchParams.get("create-review") === "true";
+  const [open, setIsOpen] = useQueryState(
+    "create-review",
+    parseAsBoolean.withDefault(false),
+  );
 
   const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      router.replace(pathname, { scroll: false });
-    }
+    setIsOpen(open);
   };
 
   const {
@@ -118,7 +116,7 @@ export const CreateReviewDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className={"md:min-w-lg p-6"}>
         <div className="flex gap-4">
           <div className="w-20 shrink-0 self-start aspect-3/4 relative">
