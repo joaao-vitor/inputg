@@ -6,6 +6,9 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { GameRating } from "./game-rating";
 import { AsideSignInPrompt } from "./aside-sign-in-prompt";
+import { Plus } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 export const GameAside = async ({ game }: { game: GameWithRelations }) => {
   if (!game) return <div>Game not found</div>;
@@ -35,10 +38,22 @@ export const GameAside = async ({ game }: { game: GameWithRelations }) => {
               defaultStatus={defaultGameStatus?.status}
               isAuthenticated={!!session?.user}
             />
-            <GameRating
-              gameId={game.id}
-              defaultRating={defaultGameStatus?.rating || 0}
-            />
+            <div className="flex flex-col w-full rounded-lg bg-input/30 p-2 mt-2 outline outline-muted-foreground/30 gap-4">
+              <GameRating
+                gameId={game.id}
+                defaultRating={defaultGameStatus?.rating || 0}
+              />
+              <hr className="border-.5 border-muted-foreground/25" />
+              <div className="flex gap-2 items-center justify-center text-muted-foreground text-sm">
+                <Link
+                  href="?create-review=true"
+                  className={`${buttonVariants({ variant: "link" })} text-inherit!`}
+                  scroll={false}
+                >
+                  <Plus /> Share your review
+                </Link>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="w-full pt-6">

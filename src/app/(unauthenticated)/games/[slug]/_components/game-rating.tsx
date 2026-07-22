@@ -10,7 +10,6 @@ export const GameRating = ({
   gameId: string;
   defaultRating: number;
 }) => {
-
   const handleRatingChange = async (newRating: number) => {
     try {
       await changeGameRating(gameId, newRating);
@@ -30,12 +29,10 @@ export const GameRating = ({
   };
 
   return (
-    <div className="flex w-full items-center justify-center rounded-lg bg-input/30 p-2 mt-2 outline outline-muted-foreground/30">
-      <StarRating
-        onChange={handleRatingChange}
-        defaultValue={defaultRating}
-        onDelete={handleDeleteRating}
-      />
-    </div>
+    <StarRating
+      onChange={handleRatingChange}
+      defaultValue={defaultRating}
+      onDelete={handleDeleteRating}
+    />
   );
 };
