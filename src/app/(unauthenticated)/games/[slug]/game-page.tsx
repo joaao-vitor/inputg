@@ -43,7 +43,7 @@ export default async function GamePageWrapper({
           <GameAside game={game} />
           <div className="flex flex-col gap-2">
             <GameDetails game={game} />
-            <GameReviews gameId={game.id} />
+            <GameReviews gameId={game.id} gameSlug={game.slug} />
           </div>
         </div>
       </div>
