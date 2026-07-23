@@ -28,7 +28,7 @@ export const GameReviews = async ({
       <section className="w-full flex flex-col gap-6 mt-4">
         {reviews.map((review) => (
           <div key={review.id} className="flex flex-col gap-6">
-            <Review review={review} />
+            <Review review={review} gameSlug={gameSlug} />
             <hr className="w-full border border-muted-foreground/10" />
           </div>
         ))}

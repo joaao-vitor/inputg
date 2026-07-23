@@ -5,8 +5,15 @@ import { ReviewWithRelations } from "@/types/review.types";
 import { Circle, Dot } from "lucide-react";
 import { ReactNode } from "react";
 import { formatDistance } from "date-fns";
+import Link from "next/link";
 
-export const Review = ({ review }: { review: ReviewWithRelations }) => {
+export const Review = ({
+  review,
+  gameSlug,
+}: {
+  review: ReviewWithRelations;
+  gameSlug: string;
+}) => {
   const statusTypes: Record<GameStatus, { label: string; icon: ReactNode }> = {
     [GameStatus.WANT_TO_PLAY]: {
       label: "Want to play",
@@ -34,7 +41,10 @@ export const Review = ({ review }: { review: ReviewWithRelations }) => {
     },
   };
   return (
-    <div className="flex gap-4 cursor-pointer group">
+    <Link
+      className="flex gap-4 cursor-pointer group"
+      href={`/games/${gameSlug}/reviews/${review.id}`}
+    >
       <Avatar className={"self-start"}>
         <AvatarImage src={review.user.image || undefined} />
         <AvatarFallback>
@@ -71,6 +81,6 @@ export const Review = ({ review }: { review: ReviewWithRelations }) => {
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
