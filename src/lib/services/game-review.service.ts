@@ -52,10 +52,44 @@ export const upsertReview = async ({
   return review;
 };
 
-export const getReviewsByGameId = async (
-  gameId: string,
-): Promise<ReviewWithRelations[]> => {
-  const reviews = prisma.review.findMany({
+export const getReviewsByGameSlug = async ({
+  gameSlug,
+  take,
+  cursor,
+}: {
+  gameSlug: string;
+  take: number;
+  cursor?: string;
+}) => {
+  const gameId = await prisma.game.findUnique({
+    where: {
+      slug: gameSlug,
+    },
+    select: {
+      id: true,
+    },
+  });
+  if (!gameId) {
+    throw new Error("Game not found");
+  }
+  return getReviewsByGameId({ gameId: gameId?.id || "", take, cursor });
+};
+
+export const getReviewsByGameId = async ({
+  gameId,
+  take = 5,
+  cursor,
+}: {
+  gameId: string;
+  take?: number;
+  cursor?: string;
+}): Promise<{
+  reviews: ReviewWithRelations[];
+  nextCursor?: string;
+}> => {
+  const reviews = await prisma.review.findMany({
+    take: take + 1,
+    cursor: cursor ? { id: cursor } : undefined,
     where: {
       gameId,
     },
@@ -83,5 +117,11 @@ export const getReviewsByGameId = async (
       },
     },
   });
-  return reviews;
+
+  let nextCursor: string | undefined;
+  if (reviews.length > take) {
+    const nextItem = reviews.pop();
+    nextCursor = nextItem?.id;
+  }
+  return { reviews, nextCursor };
 };
