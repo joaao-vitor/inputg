@@ -1,87 +1,73 @@
 import { StarRating } from "@/components/star-rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GameStatus } from "@/generated/prisma/enums";
+import { ReviewWithRelations } from "@/types/review.types";
 import { Circle, Dot } from "lucide-react";
+import { ReactNode } from "react";
+import { formatDistance } from "date-fns";
 
-export const Review = () => {
-  const statusTypes = [
-    {
-      value: GameStatus.WANT_TO_PLAY,
-      label: (
-        <span className="flex items-center gap-2">
-          <Circle className="w-2 h-2 fill-muted-foreground/50" />
-          Want to play
-        </span>
-      ),
+export const Review = ({ review }: { review: ReviewWithRelations }) => {
+  const statusTypes: Record<GameStatus, { label: string; icon: ReactNode }> = {
+    [GameStatus.WANT_TO_PLAY]: {
+      label: "Want to play",
+      icon: <Circle className="w-2 h-2 fill-muted-foreground/50" />,
     },
-    {
-      value: GameStatus.PLAYING,
-      label: (
-        <span className="flex items-center gap-2">
-          <Circle className="w-2 h-2 fill-yellow-700 text-yellow-700" />
-          Playing
-        </span>
-      ),
+
+    [GameStatus.PLAYING]: {
+      label: "Playing",
+      icon: <Circle className="w-2 h-2 fill-yellow-700 text-yellow-700" />,
     },
-    {
-      value: GameStatus.COMPLETED,
-      label: (
-        <span className="flex items-center gap-2">
-          <Circle className="w-2 h-2 fill-green-700 text-green-700" />
-          Completed
-        </span>
-      ),
+
+    [GameStatus.COMPLETED]: {
+      label: "Completed",
+      icon: <Circle className="w-2 h-2 fill-green-700 text-green-700" />,
     },
-    {
-      value: GameStatus.ABANDONED,
-      label: (
-        <span className="flex items-center gap-2">
-          <Circle className="w-2 h-2 fill-red-700 text-red-700" />
-          Abandoned
-        </span>
-      ),
+
+    [GameStatus.ABANDONED]: {
+      label: "Abandoned",
+      icon: <Circle className="w-2 h-2 fill-red-700 text-red-700" />,
     },
-    {
-      value: GameStatus.ON_HOLD,
-      label: (
-        <span className="flex items-center gap-2">
-          <Circle className="w-2 h-2 fill-blue-700 text-blue-700" />
-          On Hold
-        </span>
-      ),
+
+    [GameStatus.ON_HOLD]: {
+      label: "On Hold",
+      icon: <Circle className="w-2 h-2 fill-blue-700 text-blue-700" />,
     },
-  ];
+  };
   return (
     <div className="flex gap-4 cursor-pointer group">
       <Avatar className={"self-start"}>
-        <AvatarImage />
-        <AvatarFallback>JD</AvatarFallback>
+        <AvatarImage src={review.user.image || undefined} />
+        <AvatarFallback>
+          {review.user.username?.slice(0, 1) || "UN"}
+        </AvatarFallback>
       </Avatar>
       <div className="flex flex-col w-full">
         <div className="flex justify-between items-center w-full text-sm">
           <span className="font-mono text-accent-foreground/90 group-hover:text-primary-foreground transition-colors duration-300">
-            johndoe
+            {review.user.username}
           </span>
           <div className="w-24">
-            <StarRating value={5} readOnly />
+            <StarRating value={review.userGame.rating || 0} readOnly />
           </div>
         </div>
 
         <div className="flex items-center gap-1 text-muted-foreground/50 text-xs w-full">
-          <span>{statusTypes[0].label}</span>
+          <span className="flex items-center gap-2">
+            {statusTypes[review.userGame.status].icon}
+            {statusTypes[review.userGame.status].label}
+          </span>
           <span className="flex items-center">
             <Dot />
             PC
           </span>
 
-          <span className="ml-auto">13 days ago</span>
+          <span className="ml-auto">
+            {formatDistance(new Date(), review.createdAt)}
+          </span>
         </div>
         <div className="mt-2">
           <p className="text-sm text-accent-foreground/70 group-hover:text-accent-foreground/90 transition-colors duration-300">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint sed
-            temporibus soluta fugiat, dignissimos facilis cum voluptates
-            quisquam rerum qui non, fuga officia recusandae. Quae totam mollitia
-            omnis molestias veniam!
+            {review.content}
           </p>
         </div>
       </div>
