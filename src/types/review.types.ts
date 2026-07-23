@@ -26,8 +26,6 @@ export type ReviewWithRelations = Prisma.ReviewGetPayload<{
   };
 }>;
 
-
-
 export type ReviewWithRelationsAndGame = ReviewWithRelations & {
   game: {
     id: string;
@@ -36,5 +34,6 @@ export type ReviewWithRelationsAndGame = ReviewWithRelations & {
     slug: string;
     screenshotsIds: string[];
     igdbId: number | null;
+    releaseDate: Date | null;
   };
 };

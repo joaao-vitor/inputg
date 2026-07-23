@@ -153,6 +153,7 @@ export const getReviewById = async (
           slug: true,
           screenshotsIds: true,
           igdbId: true,
+          releaseDate: true,
         },
       },
       platform: {
