@@ -6,8 +6,13 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { GameRating } from "./game-rating";
 import { AsideSignInPrompt } from "./aside-sign-in-prompt";
+import { ReviewWithRelationsAndGame } from "@/types/review.types";
 
-export const GameAside = async ({ game }: { game: GameWithRelations }) => {
+export const GameAside = async ({
+  game,
+}: {
+  game: GameWithRelations | ReviewWithRelationsAndGame["game"];
+}) => {
   if (!game) return <div>Game not found</div>;
 
   const session = await auth.api.getSession({ headers: await headers() });

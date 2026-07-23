@@ -48,7 +48,10 @@ export const Reviews = ({
       <div className="flex flex-col mb-4">
         <h2 className="uppercase text-muted-foreground text-sm">Reviews of</h2>
         <h1 className="uppercase font-mono text-2xl text-accent-foreground tracking-tighter group">
-          <Link href={`/games/${gameDetails.slug}`} className="group-hover:text-primary-foreground transition-colors duration-300">
+          <Link
+            href={`/games/${gameDetails.slug}`}
+            className="group-hover:text-primary-foreground transition-colors duration-300"
+          >
             {gameDetails.name}{" "}
             <span className="text-muted-foreground text-lg group-hover:text-accent-foreground/75 transition-colors duration-300">
               {gameDetails.releaseDate?.getFullYear()}
@@ -60,7 +63,7 @@ export const Reviews = ({
       <section className="flex flex-col gap-6">
         {reviews.map((review) => (
           <React.Fragment key={review.id}>
-            <Review review={review} />
+            <Review review={review} gameSlug={gameDetails.slug} />
             <hr className="border border-muted-foreground/25 rounded-md" />
           </React.Fragment>
         ))}

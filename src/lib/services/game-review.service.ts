@@ -1,4 +1,7 @@
-import { ReviewWithRelations } from "@/types/review.types";
+import {
+  ReviewWithRelations,
+  ReviewWithRelationsAndGame,
+} from "@/types/review.types";
 import prisma from "../prisma";
 import { CreateReviewDTO } from "@/schemas/create-review.schema";
 
@@ -124,4 +127,49 @@ export const getReviewsByGameId = async ({
     nextCursor = nextItem?.id;
   }
   return { reviews, nextCursor };
+};
+
+export const getReviewById = async (
+  reviewId: string,
+): Promise<ReviewWithRelationsAndGame | null> => {
+  return prisma.review.findUnique({
+    where: {
+      id: reviewId,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          image: true,
+        },
+      },
+      game: {
+        select: {
+          id: true,
+          name: true,
+          igdbImageId: true,
+          slug: true,
+          screenshotsIds: true,
+          igdbId: true,
+          releaseDate: true,
+        },
+      },
+      platform: {
+        select: {
+          slug: true,
+          name: true,
+          id: true,
+        },
+      },
+      userGame: {
+        select: {
+          liked: true,
+          status: true,
+          rating: true,
+        },
+      },
+    },
+  });
 };
