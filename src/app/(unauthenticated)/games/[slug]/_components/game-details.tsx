@@ -1,15 +1,10 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
+import { GameLikeButton } from "@/components/game-like-button";
 import { GameWithRelations } from "@/types/game.types";
-import { Heart } from "lucide-react";
 import Link from "next/link";
 
 export const GameDetails = ({ game }: { game: GameWithRelations }) => {
   if (!game) return <div>Game not found</div>;
-  const handleLike = () => {
 
-  }
   return (
     <div className="flex flex-col items-center md:flex-row gap-6 w-full">
       <div className="flex flex-col h-full mt-48 gap-4 w-full">
@@ -23,10 +18,7 @@ export const GameDetails = ({ game }: { game: GameWithRelations }) => {
                 </span>
               </h1>
               <div>
-                <Button variant={"link"} className={"text-muted-foreground/50 hover:text-muted-foreground "}>
-                  <Heart />
-                  800
-                </Button>
+                <GameLikeButton gameId={game.id} />
               </div>
             </div>
             <p className="text-muted-foreground text-sm mt-2">{game.summary}</p>
