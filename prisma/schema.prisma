@@ -28,6 +28,7 @@ model User {
 
   userGames UserGame[]
   reviews   Review[]
+  gameLikes GameLike[]
 
   @@unique([email])
   @@map("user")
@@ -106,6 +107,7 @@ model Game {
 
   userGames UserGame[]
   reviews   Review[]
+  gameLikes GameLike[]
 
   @@map("game")
 }
@@ -152,8 +154,6 @@ model UserGame {
 
   rating Float? @default(0)
 
-  liked Boolean @default(false)
-
   userId String
   gameId String
 
@@ -163,6 +163,20 @@ model UserGame {
 
   @@id([userId, gameId])
   @@map("user_game")
+}
+
+model GameLike {
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  userId String
+  gameId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, gameId])
+  @@map("game_like")
 }
 
 model Review {

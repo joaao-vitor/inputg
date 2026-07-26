@@ -113,7 +113,6 @@ export const getReviewsByGameId = async ({
       },
       userGame: {
         select: {
-          liked: true,
           status: true,
           rating: true,
         },
@@ -165,7 +164,6 @@ export const getReviewById = async (
       },
       userGame: {
         select: {
-          liked: true,
           status: true,
           rating: true,
         },

@@ -18,7 +18,6 @@ export type ReviewWithRelations = Prisma.ReviewGetPayload<{
     };
     userGame: {
       select: {
-        liked: true;
         status: true;
         rating: true;
       };

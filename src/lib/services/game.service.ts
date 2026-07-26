@@ -2,7 +2,7 @@ import prisma from "../prisma";
 import { fetchOnIGDB } from "./igdb.service";
 import { IGDBGame } from "@/types/igdb.types";
 import { GameWithRelations } from "@/types/game.types";
-import { GameStatus } from "@/generated/prisma/enums";
+import { cacheTag } from "next/cache";
 
 const getGameFromIGDB = async (whereCondition: string) => {
   "use cache";
@@ -89,6 +89,7 @@ export const getGameBySlug = async (
   slug: string,
 ): Promise<GameWithRelations | null> => {
   "use cache";
+  cacheTag(`game-${slug}`);
 
   let game: GameWithRelations | null = await prisma.game.findUnique({
     where: { slug },
@@ -124,6 +125,7 @@ export const getGameByIGDBId = async (
     include: {
       genres: true,
       platforms: true,
+
     },
   });
 
