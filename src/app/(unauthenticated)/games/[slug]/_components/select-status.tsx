@@ -11,7 +11,6 @@ import { changeGameStatus } from "../../../../../lib/actions/game/change-status"
 import { toast } from "sonner";
 import { Circle } from "lucide-react";
 import { useTransition } from "react";
-import { authClient } from "@/lib/auth-client";
 
 export const SelectGameStatus = ({ isAuthenticated, gameId, defaultStatus }: { isAuthenticated: boolean; gameId: string; defaultStatus?: GameStatus }) => {
   

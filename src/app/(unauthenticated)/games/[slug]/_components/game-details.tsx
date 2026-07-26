@@ -1,19 +1,26 @@
+import { GameLikeButton } from "@/components/game-like-button";
 import { GameWithRelations } from "@/types/game.types";
 import Link from "next/link";
 
-export const GameDetails = async ({ game }: { game: GameWithRelations }) => {
+export const GameDetails = ({ game }: { game: GameWithRelations }) => {
   if (!game) return <div>Game not found</div>;
+
   return (
     <div className="flex flex-col items-center md:flex-row gap-6 w-full">
       <div className="flex flex-col h-full mt-48 gap-4 w-full">
         <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6">
           <div className="mb-4 col-span-3">
-            <h1 className="text-4xl font-bold font-mono text-center md:text-left mb-4">
-              {game.name}{" "}
-              <span className="text-xl font-light text-muted-foreground">
-                {game.releaseDate?.getFullYear()}
-              </span>
-            </h1>
+            <div className="flex items-center">
+              <h1 className="text-4xl font-bold font-mono text-center md:text-left mb-4">
+                {game.name}{" "}
+                <span className="text-xl font-light text-muted-foreground">
+                  {game.releaseDate?.getFullYear()}
+                </span>
+              </h1>
+              <div>
+                <GameLikeButton gameId={game.id} />
+              </div>
+            </div>
             <p className="text-muted-foreground text-sm mt-2">{game.summary}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-4 space-y-8 text-sm col-span-2 self-start items-start">
@@ -23,7 +30,7 @@ export const GameDetails = async ({ game }: { game: GameWithRelations }) => {
               </p>
             </div>
             <div className="col-span-3 flex space-x-6 space-y-1 flex-wrap">
-              {game.genres.map((genre) => (
+              {game.genres?.map((genre) => (
                 <Link href={`/genre/${genre.slug}`} key={genre.id}>
                   <span className="text-muted-foreground underline underline-offset-6 hover:text-accent-foreground transition duration-300">
                     {genre.name}{" "}
@@ -37,7 +44,7 @@ export const GameDetails = async ({ game }: { game: GameWithRelations }) => {
               </p>
             </div>
             <div className="col-span-3 flex space-x-6 space-y-1 flex-wrap">
-              {game.platforms.map((platform) => (
+              {game.platforms?.map((platform) => (
                 <Link href={`/platform/${platform.slug}`} key={platform.id}>
                   <span className="text-muted-foreground underline underline-offset-6 hover:text-accent-foreground transition duration-300">
                     {platform.name}{" "}
