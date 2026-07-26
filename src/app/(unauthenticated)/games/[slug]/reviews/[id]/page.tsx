@@ -14,7 +14,6 @@ export default async function ReviewPage({
   if (!review) {
     return <div>Review not found</div>;
   }
-
   return (
     <div className="flex flex-col items-center relative">
       <div className="relative h-[50vh] container max-h-128 max-w-7xl">

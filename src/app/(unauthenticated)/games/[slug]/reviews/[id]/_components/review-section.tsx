@@ -1,11 +1,8 @@
-"use client";
-
+import { ReviewLikeButton } from "@/components/review-like-button";
 import { StarRating } from "@/components/star-rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { ReviewWithRelationsAndGame } from "@/types/review.types";
 import { format } from "date-fns";
-import { Heart } from "lucide-react";
 import Link from "next/link";
 
 export const ReviewSection = ({
@@ -48,17 +45,7 @@ export const ReviewSection = ({
         <div className="prose prose-invert max-w-none text-muted-foreground">
           {review.content}
         </div>
-        <div className="text-sm flex items-center gap-2">
-          <Button
-            variant={"link"}
-            className={"text-muted-foreground font-semibold px-0"}
-            size={"sm"}
-          >
-            <Heart />
-            like review
-          </Button>
-          <span className="text-muted-foreground/50">1000 likes</span>
-        </div>
+        <ReviewLikeButton reviewId={review.id} />
       </div>
     </main>
   );
