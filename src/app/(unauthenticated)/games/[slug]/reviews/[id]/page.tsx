@@ -1,7 +1,7 @@
-import { getReviewById } from "@/lib/services/game-review.service";
 import { ReviewSection } from "./_components/review-section";
 import Image from "next/image";
 import { GameAside } from "../../_components/game-aside";
+import { fetchReviewById } from "@/lib/dal/fetch-reviews";
 
 export default async function ReviewPage({
   params,
@@ -9,7 +9,7 @@ export default async function ReviewPage({
   params: { slug: string; id: string };
 }) {
   const { slug, id } = await params;
-  const review = await getReviewById(id);
+  const review = await fetchReviewById({ reviewId: id });
 
   if (!review) {
     return <div>Review not found</div>;

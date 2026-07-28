@@ -26,9 +26,10 @@ model User {
   username        String?
   displayUsername String?
 
-  userGames UserGame[]
-  reviews   Review[]
-  gameLikes GameLike[]
+  userGames   UserGame[]
+  reviews     Review[]
+  gameLikes   GameLike[]
+  reviewLikes ReviewLike[]
 
   @@unique([email])
   @@map("user")
@@ -191,10 +192,25 @@ model Review {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId     String
-  gameId     String
-  platformId String?
+  userId      String
+  gameId      String
+  platformId  String?
+  reviewLikes ReviewLike[]
 
   @@unique([userId, gameId])
   @@map("review")
+}
+
+model ReviewLike {
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  userId   String
+  reviewId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, reviewId])
+  @@map("review_like")
 }

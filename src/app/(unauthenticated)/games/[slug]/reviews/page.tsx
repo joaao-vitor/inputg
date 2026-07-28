@@ -1,14 +1,16 @@
-import { getReviewsByGameSlug } from "@/lib/services/game-review.service";
 import { Reviews } from "./reviews";
 import { getGameBySlug } from "@/lib/services/game.service";
 import Image from "next/image";
 import Link from "next/link";
+import { fetchReviewsByGameSlug } from "@/lib/dal/fetch-reviews";
+import { connection } from "next/server";
 
 export default async function ReviewsPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await connection();
   const { slug } = await params;
   const gameDetails = await getGameBySlug(slug);
 
@@ -16,9 +18,9 @@ export default async function ReviewsPage({
     return <div>Game not found</div>;
   }
 
-  const { reviews, nextCursor } = await getReviewsByGameSlug({
+  const { reviews, nextCursor } = await fetchReviewsByGameSlug({
     gameSlug: slug,
-    take: 10,
+    take: 1,
   });
 
   return (

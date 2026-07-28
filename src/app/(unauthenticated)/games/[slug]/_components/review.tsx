@@ -6,6 +6,7 @@ import { Circle, Dot } from "lucide-react";
 import { ReactNode } from "react";
 import { formatDistance } from "date-fns";
 import Link from "next/link";
+import { ReviewLikeButton } from "@/components/review-like-button";
 
 export const Review = ({
   review,
@@ -75,10 +76,11 @@ export const Review = ({
             {formatDistance(new Date(), review.createdAt)}
           </span>
         </div>
-        <div className="mt-2">
+        <div className="mt-2 space-y-2">
           <p className="text-sm text-accent-foreground/70 group-hover:text-accent-foreground/90 transition-colors duration-300">
             {review.content}
           </p>
+          <ReviewLikeButton reviewId={review.id} initialIsLiked={review.isLiked} initialLikeCount={review.likesCount} isLoggedIn={true} />
         </div>
       </div>
     </Link>

@@ -22,14 +22,14 @@ export const Reviews = ({
     initialNextCursor,
   );
   const [isPending, startTransition] = useTransition();
-
+  
   const loadMore = () => {
     if (!nextCursor || isPending) return;
     startTransition(async () => {
       const { reviews, nextCursor: newNextCursor } =
         await fetchReviewsByGameSlug({
           gameSlug: gameDetails.slug,
-          take: 10,
+          take: 1,
           cursor: nextCursor,
         });
       setReviews((prev) => [...prev, ...reviews]);
