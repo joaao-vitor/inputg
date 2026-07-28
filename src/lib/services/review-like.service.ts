@@ -1,7 +1,7 @@
 import prisma from "../prisma";
 
 export const likeReview = async (reviewId: string, userId: string) => {
-  const game = await prisma.$transaction(async (tx) => {
+  const review = await prisma.$transaction(async (tx) => {
     const existingLike = await tx.reviewLike.findUnique({
       where: {
         userId_reviewId: {
@@ -30,7 +30,16 @@ export const likeReview = async (reviewId: string, userId: string) => {
     }
     return await tx.review.findUnique({
       where: { id: reviewId },
-      select: {
+      include: {
+        _count: {
+          select: {
+            reviewLikes: true,
+          },
+        },
+        reviewLikes: {
+          where: { userId },
+          select: { userId: true },
+        },
         game: {
           select: {
             slug: true,
@@ -39,7 +48,12 @@ export const likeReview = async (reviewId: string, userId: string) => {
       },
     });
   });
-  return game?.game || null;
+
+  return {
+    isLiked: review?.reviewLikes && review?.reviewLikes.length > 0,
+    likeCount: review?._count.reviewLikes ?? 0,
+    gameSlug: review?.game?.slug ?? null,
+  };
 };
 
 export const getReviewLikesCountAndOrStatus = async (
