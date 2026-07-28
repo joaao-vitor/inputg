@@ -1,6 +1,6 @@
 import { Prisma } from "@/generated/prisma/client";
 
-export type ReviewWithRelations = Prisma.ReviewGetPayload<{
+export type ReviewBasePayload = Prisma.ReviewGetPayload<{
   include: {
     user: {
       select: {
@@ -24,6 +24,11 @@ export type ReviewWithRelations = Prisma.ReviewGetPayload<{
     };
   };
 }>;
+
+export type ReviewWithRelations = ReviewBasePayload & {
+  likesCount: number;
+  isLiked: boolean;
+};
 
 export type ReviewWithRelationsAndGame = ReviewWithRelations & {
   game: {

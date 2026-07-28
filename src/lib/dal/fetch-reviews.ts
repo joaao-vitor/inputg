@@ -1,6 +1,11 @@
 "use server";
-
-import { getReviewsByGameSlug } from "../services/game-review.service";
+import { headers } from "next/headers";
+import {
+  getReviewById,
+  getReviewsByGameId,
+  getReviewsByGameSlug,
+} from "../services/game-review.service";
+import { auth } from "../auth";
 
 export const fetchReviewsByGameSlug = async ({
   gameSlug,
@@ -11,6 +16,38 @@ export const fetchReviewsByGameSlug = async ({
   take: number;
   cursor?: string;
 }) => {
-  const response = await getReviewsByGameSlug({ gameSlug, take, cursor });
+  const session = await auth.api.getSession({ headers: await headers() });
+  const response = await getReviewsByGameSlug({
+    gameSlug,
+    take,
+    cursor,
+    currentUserId: session?.user?.id,
+  });
+  return response;
+};
+
+export const fetchReviewsByGameId = async ({
+  gameId,
+  take = 5,
+  cursor,
+}: {
+  gameId: string;
+  take: number;
+  cursor?: string;
+}) => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const response = await getReviewsByGameId({
+    gameId,
+    take,
+    cursor,
+    currentUserId: session?.user?.id,
+  });
+  return response;
+};
+
+export const fetchReviewById = async ({ reviewId }: { reviewId: string }) => {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  const response = await getReviewById(reviewId, session?.user?.id);
   return response;
 };

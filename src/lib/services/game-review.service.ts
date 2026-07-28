@@ -1,7 +1,4 @@
-import {
-  ReviewWithRelations,
-  ReviewWithRelationsAndGame,
-} from "@/types/review.types";
+import { ReviewWithRelationsAndGame } from "@/types/review.types";
 import prisma from "../prisma";
 import { CreateReviewDTO } from "@/schemas/create-review.schema";
 
@@ -13,7 +10,7 @@ export const upsertReview = async ({
   gameStatus,
   platformId,
 }: CreateReviewDTO) => {
-  const [_, review] = await prisma.$transaction([
+  const [, review] = await prisma.$transaction([
     prisma.userGame.upsert({
       where: {
         userId_gameId: {
@@ -59,43 +56,45 @@ export const getReviewsByGameSlug = async ({
   gameSlug,
   take,
   cursor,
+  currentUserId,
 }: {
   gameSlug: string;
   take: number;
   cursor?: string;
+  currentUserId?: string;
 }) => {
-  const gameId = await prisma.game.findUnique({
-    where: {
-      slug: gameSlug,
-    },
-    select: {
-      id: true,
-    },
+  const game = await prisma.game.findUnique({
+    where: { slug: gameSlug },
+    select: { id: true },
   });
-  if (!gameId) {
+
+  if (!game) {
     throw new Error("Game not found");
   }
-  return getReviewsByGameId({ gameId: gameId?.id || "", take, cursor });
+
+  return getReviewsByGameId({
+    gameId: game.id,
+    take,
+    cursor,
+    currentUserId,
+  });
 };
 
 export const getReviewsByGameId = async ({
   gameId,
   take = 5,
   cursor,
+  currentUserId,
 }: {
   gameId: string;
   take?: number;
   cursor?: string;
-}): Promise<{
-  reviews: ReviewWithRelations[];
-  nextCursor?: string;
-}> => {
+  currentUserId?: string;
+}) => {
   const reviews = await prisma.review.findMany({
     take: take + 1,
     cursor: cursor ? { id: cursor } : undefined,
-    where: {
-      gameId,
-    },
+    where: { gameId },
     include: {
       user: {
         select: {
@@ -117,6 +116,17 @@ export const getReviewsByGameId = async ({
           rating: true,
         },
       },
+      _count: {
+        select: {
+          reviewLikes: true,
+        },
+      },
+      reviewLikes: currentUserId
+        ? {
+            where: { userId: currentUserId },
+            select: { userId: true },
+          }
+        : false,
     },
   });
 
@@ -125,13 +135,24 @@ export const getReviewsByGameId = async ({
     const nextItem = reviews.pop();
     nextCursor = nextItem?.id;
   }
-  return { reviews, nextCursor };
+
+  const formattedReviews = reviews.map((review) => {
+    const { _count, reviewLikes, ...rest } = review;
+    return {
+      ...rest,
+      likesCount: _count?.reviewLikes ?? 0,
+      isLiked: Array.isArray(reviewLikes) && reviewLikes.length > 0,
+    };
+  });
+
+  return { reviews: formattedReviews, nextCursor };
 };
 
 export const getReviewById = async (
   reviewId: string,
+  currentUserId?: string,
 ): Promise<ReviewWithRelationsAndGame | null> => {
-  return prisma.review.findUnique({
+  const review = await prisma.review.findUnique({
     where: {
       id: reviewId,
     },
@@ -168,6 +189,25 @@ export const getReviewById = async (
           rating: true,
         },
       },
+      _count: {
+        select: {
+          reviewLikes: true,
+        },
+      },
+      reviewLikes: currentUserId
+        ? {
+            where: { userId: currentUserId },
+            select: { userId: true },
+          }
+        : false,
     },
   });
+
+  if (!review) return null;
+  const { _count, reviewLikes, ...rest } = review;
+  return {
+    ...rest,
+    likesCount: _count?.reviewLikes ?? 0,
+    isLiked: Array.isArray(reviewLikes) && reviewLikes.length > 0,
+  };
 };
