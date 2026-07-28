@@ -1,7 +1,7 @@
-import { getReviewsByGameId } from "@/lib/services/game-review.service";
 import { Review } from "./review";
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
+import { fetchReviewsByGameId } from "@/lib/dal/fetch-reviews";
 
 export const GameReviews = async ({
   gameSlug,
@@ -10,7 +10,7 @@ export const GameReviews = async ({
   gameSlug: string;
   gameId: string;
 }) => {
-  const { reviews } = await getReviewsByGameId({ gameId, take: 5 });
+  const { reviews } = await fetchReviewsByGameId({ gameId, take: 5 });
 
   return (
     <div className="flex flex-col gap-2 w-full">

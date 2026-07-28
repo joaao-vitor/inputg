@@ -45,7 +45,12 @@ export const ReviewSection = ({
         <div className="prose prose-invert max-w-none text-muted-foreground">
           {review.content}
         </div>
-        <ReviewLikeButton reviewId={review.id} />
+        <ReviewLikeButton
+          reviewId={review.id}
+          initialIsLiked={review.isLiked}
+          initialLikeCount={review.likesCount}
+          isLoggedIn={true}
+        />
       </div>
     </main>
   );
