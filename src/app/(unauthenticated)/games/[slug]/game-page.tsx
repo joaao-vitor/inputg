@@ -3,26 +3,14 @@ import { GameDetails } from "./_components/game-details";
 import Image from "next/image";
 import { GameAside } from "./_components/game-aside";
 import { GameReviews } from "./_components/game-reviews";
-import { CreateReviewDialog } from "./_components/create-review/create-review-dialog";
-import { getGameStatusByUserAndGame } from "@/lib/services/game-status.service";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 
 export default async function GamePageWrapper({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
   const { slug } = await params;
   const game = await getGameBySlug(slug);
-  const defaultGameStatus =
-    (session?.user &&
-      game?.id &&
-      (await getGameStatusByUserAndGame(session?.user.id, game?.id))) ||
-    null;
-
   if (!game) {
     return <div>Game not found</div>;
   }
@@ -47,7 +35,6 @@ export default async function GamePageWrapper({
           </div>
         </div>
       </div>
-      <CreateReviewDialog game={game} defaultGameStatus={defaultGameStatus} />
     </>
   );
 }

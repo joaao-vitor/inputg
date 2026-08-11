@@ -1,3 +1,4 @@
+import { ReviewDialogWrapper } from "@/components/review-dialog";
 import { Footer } from "@/components/unauth/footer";
 import { Navbar } from "@/components/unauth/navbar";
 
@@ -9,10 +10,9 @@ export default function UnauthenticatedLayout({
   return (
     <div className="min-h-full w-full flex flex-col">
       <Navbar />
-      <main className=" w-full flex-1">
-        {children}
-      </main>
+      <main className=" w-full flex-1">{children}</main>
       <Footer />
+      <ReviewDialogWrapper />
     </div>
   );
 }
