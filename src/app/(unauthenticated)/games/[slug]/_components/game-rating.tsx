@@ -3,19 +3,25 @@ import { StarRating } from "@/components/star-rating";
 import { Button } from "@/components/ui/button";
 import { changeGameRating } from "@/lib/actions/game/change-status";
 import { Plus } from "lucide-react";
-import { parseAsBoolean, useQueryState } from "nuqs";
+import { parseAsBoolean, parseAsString, useQueryState } from "nuqs";
 import { toast } from "sonner";
 
 export const GameRating = ({
   gameId,
+  gameSlug,
   defaultRating,
 }: {
   gameId: string;
+  gameSlug: string;
   defaultRating: number;
 }) => {
   const [, setIsCreateReviewOpen] = useQueryState(
-    "create-review",
+    "review-dialog",
     parseAsBoolean.withDefault(false),
+  );
+  const [, setCreateReviewGameSlug] = useQueryState(
+    "game-slug",
+    parseAsString.withDefault(""),
   );
 
   const handleRatingChange = async (newRating: number) => {
@@ -49,7 +55,10 @@ export const GameRating = ({
         <Button
           variant={"link"}
           className={"text-inherit"}
-          onClick={() => setIsCreateReviewOpen(true)}
+          onClick={() => {
+            setIsCreateReviewOpen(true);
+            setCreateReviewGameSlug(gameSlug);
+          }}
         >
           <Plus /> Share your review
         </Button>
