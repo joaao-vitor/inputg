@@ -1,4 +1,4 @@
-import { Prisma } from "@/generated/prisma/client";
+import { Prisma, UserGame } from "@/generated/prisma/client";
 
 export type GameWithRelations = Prisma.GameGetPayload<{
   include: {
@@ -6,3 +6,7 @@ export type GameWithRelations = Prisma.GameGetPayload<{
     platforms: true;
   };
 }>;
+
+export type GameWithUserStatus = GameWithRelations & {
+  userGameStatus: UserGame | null;
+};

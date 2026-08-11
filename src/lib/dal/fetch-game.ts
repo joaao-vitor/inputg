@@ -1,0 +1,20 @@
+"use server";
+import { headers } from "next/headers";
+import { getGameStatusByUserAndGame } from "../services/game-status.service";
+import { getGameBySlug } from "../services/game.service";
+import { auth } from "../auth";
+import { GameWithUserStatus } from "@/types/game.types";
+
+export const fetchGameAsUser = async (gameSlug: string): Promise<GameWithUserStatus | null> => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return null;
+
+  const game = await getGameBySlug(gameSlug);
+  if (!game) return null;
+
+  const userGameStatus = await getGameStatusByUserAndGame(
+    session.user.id,
+    game.id,
+  );
+  return { ...game, userGameStatus };
+};
