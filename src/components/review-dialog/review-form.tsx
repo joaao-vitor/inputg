@@ -23,18 +23,20 @@ import {
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { ReviewWithRelations } from "@/types/review.types";
+import { sendReview } from "@/lib/actions/game/send-review";
+import { toast } from "sonner";
+import { useReviewDialogQuery } from "@/hooks/use-review-dialog-query";
+import { deleteReview } from "@/lib/actions/game/delete-review";
 
 export const ReviewForm = ({
   gameData,
-  onCancel,
-  onSubmit,
   review,
 }: {
   gameData: GameWithUserStatus;
-  onCancel: () => void;
-  onSubmit: (data: z.infer<typeof reviewFormSchema>) => void;
   review?: ReviewWithRelations | null;
 }) => {
+  const { close } = useReviewDialogQuery();
+
   const {
     control,
     handleSubmit,
@@ -48,6 +50,32 @@ export const ReviewForm = ({
       platformId: review?.platformId || "",
     },
   });
+
+  const onSubmit = async (data: z.infer<typeof reviewFormSchema>) => {
+    try {
+      await sendReview({ gameId: gameData.id, ...data });
+      toast.success("Review created successfully!");
+      close();
+    } catch (error) {
+      toast.error(`Error creating review`);
+    }
+  };
+
+  const onCancel = () => {
+    close();
+  };
+
+  const onDelete = async () => {
+    if (!review) return;
+
+    try {
+      await deleteReview(review.id);
+      toast.success("Review deleted successfully!");
+    } catch (error) {
+      toast.error(`Error deleting review: ${error}`);
+    }
+    close();
+  };
 
   // TODO: Future update the select-status.tsx to be more reusable and be usable in this context
   const statusSelect = [
@@ -203,14 +231,25 @@ export const ReviewForm = ({
         />
       </FieldGroup>
       <div className="flex w-fit gap-2 ml-auto mt-4">
-        <Button
-          variant={"secondary"}
-          type="button"
-          onClick={onCancel}
-          disabled={isSubmitting}
-        >
-          Cancel
-        </Button>
+        {review ? (
+          <Button
+            variant={"destructive"}
+            type="button"
+            onClick={() => onDelete()}
+            disabled={isSubmitting}
+          >
+            Delete
+          </Button>
+        ) : (
+          <Button
+            variant={"secondary"}
+            type="button"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+        )}
         <Button type="submit" disabled={isSubmitting}>
           Confirm
         </Button>

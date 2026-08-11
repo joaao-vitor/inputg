@@ -1,7 +1,6 @@
 "use client";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Image from "next/image";
-import { parseAsBoolean, parseAsString, useQueryState } from "nuqs";
 import { fetchGameAsUser } from "@/lib/dal/fetch-game";
 import { ReviewForm } from "./review-form";
 import { useQuery } from "@tanstack/react-query";
@@ -11,21 +10,11 @@ import { sendReview } from "@/lib/actions/game/send-review";
 import { toast } from "sonner";
 import z from "zod";
 import { fetchReviewById } from "@/lib/dal/fetch-reviews";
+import { useReviewDialogQuery } from "@/hooks/use-review-dialog-query";
 
 export const ReviewDialog = () => {
   const { data: session, isPending } = authClient.useSession();
-  const [open, setOpen] = useQueryState(
-    "review-dialog",
-    parseAsBoolean.withDefault(false),
-  );
-  const [reviewId, setReviewId] = useQueryState(
-    "review-id",
-    parseAsString.withDefault(""),
-  );
-  const [gameSlug, setGameSlug] = useQueryState(
-    "game-slug",
-    parseAsString.withDefault(""),
-  );
+  const { gameSlug, reviewId, open, close, setOpen } = useReviewDialogQuery();
 
   const { data: gameData } = useQuery({
     queryKey: ["gameAsUser", gameSlug],
@@ -40,9 +29,8 @@ export const ReviewDialog = () => {
   });
 
   const handleOpenChange = (open: boolean) => {
-    setOpen(open);
-    setGameSlug(open ? gameSlug : "");
-    setReviewId(open ? reviewId : "");
+    if (open) close();
+    else setOpen(open);
   };
 
   if (!isPending && !session) return null;
@@ -50,16 +38,6 @@ export const ReviewDialog = () => {
   if (!gameData) return null;
 
   if (reviewData && reviewData?.user.id !== session?.user?.id) return null;
-
-  const onSubmit = async (data: z.infer<typeof reviewFormSchema>) => {
-    try {
-      await sendReview({ gameId: gameData.id, ...data });
-      toast.success("Review created successfully!");
-      handleOpenChange(false);
-    } catch (error) {
-      toast.error(`Error creating review`);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -81,9 +59,8 @@ export const ReviewDialog = () => {
 
             <ReviewForm
               gameData={gameData}
-              onCancel={() => handleOpenChange(false)}
-              onSubmit={onSubmit}
               review={reviewData}
+              
             />
           </div>
         </div>
