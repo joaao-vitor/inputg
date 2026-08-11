@@ -211,3 +211,17 @@ export const getReviewById = async (
     isLiked: Array.isArray(reviewLikes) && reviewLikes.length > 0,
   };
 };
+
+export const deleteReviewById = async (reviewId: string, userId: string) => {
+  const review = await prisma.review.findUnique({
+    where: { id: reviewId },
+    select: { userId: true },
+  });
+
+  if (review?.userId !== userId)
+    throw new Error("You are not authorized to delete this review");
+
+  await prisma.review.delete({
+    where: { id: reviewId },
+  });
+};
