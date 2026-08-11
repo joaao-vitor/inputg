@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { upsertReview } from "@/lib/services/game-review.service";
 import { ReviewActionSchema } from "@/schemas/create-review.schema";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 export const sendReview = async (data: ReviewActionSchema) => {
@@ -14,5 +15,6 @@ export const sendReview = async (data: ReviewActionSchema) => {
   }
 
   const review = await upsertReview({ userId: session.user.id, ...data });
+  revalidatePath(`/games/${data.gameId}`, "layout");
   return review;
 };
