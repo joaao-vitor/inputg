@@ -1,8 +1,12 @@
+"use client";
 import { ReviewLikeButton } from "@/components/review-like-button";
 import { StarRating } from "@/components/star-rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { useReviewDialogQuery } from "@/hooks/use-review-dialog-query";
 import { ReviewWithRelationsAndGame } from "@/types/review.types";
 import { format } from "date-fns";
+import { SquarePen } from "lucide-react";
 import Link from "next/link";
 
 export const ReviewSection = ({
@@ -10,20 +14,37 @@ export const ReviewSection = ({
 }: {
   review: ReviewWithRelationsAndGame;
 }) => {
+  const { openAsEdit } = useReviewDialogQuery();
+  const handleEditClick = () => {
+    openAsEdit(review.game.slug, review.id);
+  };
+
   return (
     <main className="flex flex-col gap-4 mt-48 w-full">
       <div className="w-full space-y-4">
-        <div className="flex gap-4 items-center">
-          <Avatar>
-            <AvatarFallback>
-              {review.user.username?.charAt(0).toUpperCase() || "U"}
-            </AvatarFallback>
-            <AvatarImage src={review.user.image || ""} />
-          </Avatar>
-          <h3 className="text-sm text-muted-foreground font-light">
-            Review by{" "}
-            <span className="font-semibold">{review.user.username}</span>
-          </h3>
+        <div className="flex justify-between items-center">
+          <div className="flex gap-4 items-center">
+            <Avatar>
+              <AvatarFallback>
+                {review.user.username?.charAt(0).toUpperCase() || "U"}
+              </AvatarFallback>
+              <AvatarImage src={review.user.image || ""} />
+            </Avatar>
+            <h3 className="text-sm text-muted-foreground font-light">
+              Review by{" "}
+              <span className="font-semibold">{review.user.username}</span>
+            </h3>
+          </div>
+          <div>
+            <Button
+              variant={"ghost"}
+              size={"xs"}
+              className={"text-muted-foreground cursor-pointer"}
+              onClick={handleEditClick}
+            >
+              <SquarePen /> EDIT OR DELETE THIS REVIEW
+            </Button>
+          </div>
         </div>
         <hr />
       </div>

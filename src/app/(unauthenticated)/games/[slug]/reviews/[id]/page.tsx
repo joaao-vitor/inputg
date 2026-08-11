@@ -29,7 +29,7 @@ export default async function ReviewPage({
         <div className="absolute inset-0 bg-linear-to-r from-background via-background/10 to-transparent"></div>
         <div className="absolute inset-0 bg-linear-to-l from-background via-background/10 to-transparent"></div>
       </div>
-      <div className="container max-w-7xl -mt-64 px-6 flex gap-12 z-51">
+      <div className="container max-w-7xl -mt-64 px-6 flex gap-12 z-4">
         <GameAside game={review.game} />
         <ReviewSection review={review} />
       </div>
