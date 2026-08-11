@@ -4,6 +4,7 @@ import { StarRating } from "@/components/star-rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useReviewDialogQuery } from "@/hooks/use-review-dialog-query";
+import { authClient } from "@/lib/auth-client";
 import { ReviewWithRelationsAndGame } from "@/types/review.types";
 import { format } from "date-fns";
 import { SquarePen } from "lucide-react";
@@ -19,6 +20,7 @@ export const ReviewSection = ({
     openAsEdit(review.game.slug, review.id);
   };
 
+  const { data: session, isPending } = authClient.useSession();
   return (
     <main className="flex flex-col gap-4 mt-48 w-full">
       <div className="w-full space-y-4">
@@ -36,14 +38,16 @@ export const ReviewSection = ({
             </h3>
           </div>
           <div>
-            <Button
-              variant={"ghost"}
-              size={"xs"}
-              className={"text-muted-foreground cursor-pointer"}
-              onClick={handleEditClick}
-            >
-              <SquarePen /> EDIT OR DELETE THIS REVIEW
-            </Button>
+            {!isPending && session && session.user?.id === review.user.id && (
+              <Button
+                variant={"ghost"}
+                size={"xs"}
+                className={"text-muted-foreground cursor-pointer"}
+                onClick={handleEditClick}
+              >
+                <SquarePen /> EDIT OR DELETE THIS REVIEW
+              </Button>
+            )}
           </div>
         </div>
         <hr />
