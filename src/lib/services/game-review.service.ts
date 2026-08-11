@@ -221,7 +221,14 @@ export const deleteReviewById = async (reviewId: string, userId: string) => {
   if (review?.userId !== userId)
     throw new Error("You are not authorized to delete this review");
 
-  await prisma.review.delete({
+  return await prisma.review.delete({
     where: { id: reviewId },
+    include: {
+      game: {
+        select: {
+          slug: true,
+        },
+      },
+    },
   });
 };
