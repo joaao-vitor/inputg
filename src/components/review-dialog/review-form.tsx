@@ -22,15 +22,18 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import { ReviewWithRelations } from "@/types/review.types";
 
 export const ReviewForm = ({
   gameData,
   onCancel,
   onSubmit,
+  review,
 }: {
   gameData: GameWithUserStatus;
   onCancel: () => void;
   onSubmit: (data: z.infer<typeof reviewFormSchema>) => void;
+  review?: ReviewWithRelations | null;
 }) => {
   const {
     control,
@@ -38,11 +41,11 @@ export const ReviewForm = ({
     formState: { isSubmitting },
   } = useForm<z.infer<typeof reviewFormSchema>>({
     resolver: zodResolver(reviewFormSchema),
-    defaultValues: {
+    values: {
       rating: gameData.userGameStatus?.rating || 0,
       gameStatus: gameData.userGameStatus?.status || GameStatus.COMPLETED,
-      content: "",
-      platformId: "",
+      content: review?.content || "",
+      platformId: review?.platformId || "",
     },
   });
 

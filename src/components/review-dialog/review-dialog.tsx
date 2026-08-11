@@ -10,6 +10,7 @@ import { reviewFormSchema } from "@/schemas/create-review.schema";
 import { sendReview } from "@/lib/actions/game/send-review";
 import { toast } from "sonner";
 import z from "zod";
+import { fetchReviewById } from "@/lib/dal/fetch-reviews";
 
 export const ReviewDialog = () => {
   const { data: session, isPending } = authClient.useSession();
@@ -32,16 +33,23 @@ export const ReviewDialog = () => {
     enabled: open && !!gameSlug,
   });
 
+  const { data: reviewData } = useQuery({
+    queryKey: ["review", reviewId],
+    queryFn: () => fetchReviewById({ reviewId }),
+    enabled: open && !!reviewId,
+  });
+
   const handleOpenChange = (open: boolean) => {
     setOpen(open);
     setGameSlug(open ? gameSlug : "");
+    setReviewId(open ? reviewId : "");
   };
 
-  if (!isPending && !session) {
-    return <div>Please log in to leave a review.</div>;
-  }
+  if (!isPending && !session) return null;
 
   if (!gameData) return null;
+
+  if (reviewData && reviewData?.user.id !== session?.user?.id) return null;
 
   const onSubmit = async (data: z.infer<typeof reviewFormSchema>) => {
     try {
@@ -75,6 +83,7 @@ export const ReviewDialog = () => {
               gameData={gameData}
               onCancel={() => handleOpenChange(false)}
               onSubmit={onSubmit}
+              review={reviewData}
             />
           </div>
         </div>
