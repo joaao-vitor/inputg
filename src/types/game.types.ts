@@ -10,3 +10,32 @@ export type GameWithRelations = Prisma.GameGetPayload<{
 export type GameWithUserStatus = GameWithRelations & {
   userGameStatus: UserGame | null;
 };
+
+export type GameFromIGDB = {
+  id: number;
+  name: string;
+  slug: string;
+  summary?: string;
+  cover?: {
+    url: string;
+    image_id: string;
+  };
+  game_type?: string;
+  version_parent?: {
+    id: number;
+  };
+  platforms?: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
+  genres?: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
+  screenshots?: {
+    id: number;
+    image_id: string;
+  }[];
+};
