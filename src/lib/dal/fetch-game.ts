@@ -1,11 +1,23 @@
 "use server";
 import { headers } from "next/headers";
 import { getGameStatusByUserAndGame } from "../services/game-status.service";
-import { getGameBySlug } from "../services/game.service";
+import { getGameBySlug, getGamesFromIGDB } from "../services/game.service";
 import { auth } from "../auth";
 import { GameWithUserStatus } from "@/types/game.types";
 
-export const fetchGameAsUser = async (gameSlug: string): Promise<GameWithUserStatus | null> => {
+export const fetchGames = async (
+  search?: string,
+  take: number = 5,
+  cursor?: number,
+) => {
+  const games = await getGamesFromIGDB(search, take, cursor);
+  console.log("Fetched games:", games);
+  return games;
+};
+
+export const fetchGameAsUser = async (
+  gameSlug: string,
+): Promise<GameWithUserStatus | null> => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return null;
 

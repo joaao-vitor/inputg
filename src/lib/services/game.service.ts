@@ -1,8 +1,30 @@
 import prisma from "../prisma";
 import { fetchOnIGDB } from "./igdb.service";
 import { IGDBGame } from "@/types/igdb.types";
-import { GameWithRelations } from "@/types/game.types";
+import { GameFromIGDB, GameWithRelations } from "@/types/game.types";
 import { cacheTag } from "next/cache";
+
+export const getGamesFromIGDB = async (
+  search?: string,
+  take: number = 5,
+  cursor?: number,
+): Promise<{ games: GameFromIGDB[]; nextCursor?: number }> => {
+  const query = `fields id, name, platforms.name, platforms.slug, \
+  first_release_date, slug, summary, url, game_type, \
+  cover.image_id, genres.name, genres.slug, version_parent.id, screenshots.image_id; \
+  ${search ? `search "${search}";` : ""} \
+  ${cursor ? `where id < ${cursor};` : ""} \
+  limit ${take};`;
+
+  const games = await fetchOnIGDB("games", query);
+
+  let nextCursor = undefined;
+  if (games.length > take) {
+    nextCursor = games[games.length - 1].id;
+  }
+
+  return { games, nextCursor };
+};
 
 const getGameFromIGDB = async (whereCondition: string) => {
   "use cache";
@@ -125,7 +147,6 @@ export const getGameByIGDBId = async (
     include: {
       genres: true,
       platforms: true,
-
     },
   });
 
