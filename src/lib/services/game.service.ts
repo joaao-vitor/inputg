@@ -7,14 +7,15 @@ import { cacheTag } from "next/cache";
 export const getGamesFromIGDB = async (
   search?: string,
   take: number = 5,
-  cursor?: number,
-): Promise<{ games: GameFromIGDB[]; nextCursor?: number }> => {
+  cursor?: string,
+): Promise<{ games: GameFromIGDB[]; nextCursor?: string }> => {
   const query = `fields id, name, platforms.name, platforms.slug, \
   first_release_date, slug, summary, url, game_type, \
   cover.image_id, genres.name, genres.slug, version_parent.id, screenshots.image_id; \
   ${search ? `search "${search}";` : ""} \
   ${cursor ? `where id < ${cursor};` : ""} \
-  limit ${take};`;
+  where version_parent = null & game_type = 0;  ${search ? "" : "sort rating desc;"} \
+  limit ${take + 1}; `;
 
   const games = await fetchOnIGDB("games", query);
 

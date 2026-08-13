@@ -8,10 +8,9 @@ import { GameWithUserStatus } from "@/types/game.types";
 export const fetchGames = async (
   search?: string,
   take: number = 5,
-  cursor?: number,
+  cursor?: string,
 ) => {
   const games = await getGamesFromIGDB(search, take, cursor);
-  console.log("Fetched games:", games);
   return games;
 };
 
