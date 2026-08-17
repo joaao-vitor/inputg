@@ -11,8 +11,12 @@ import { Filter } from "lucide-react";
 import { fetchPlatformsFromIGDB } from "@/lib/dal/fetch-platform";
 import { PlatformFromIGDB } from "@/types/platform.types";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+import { fetchAllGenreFromIGDB } from "@/lib/dal/fetch-genre";
+import { GenreFromIGDB } from "@/types/genre.types";
 
 export default function Page() {
+  const [filterOpen, setFilterOpen] = useState(false);
+
   const [platformsFilter, setPlatformsFilter] = useQueryState(
     "platforms",
     parseAsArrayOf(parseAsString),
@@ -22,30 +26,49 @@ export default function Page() {
     parseAsArrayOf(parseAsString),
   );
 
-  const [filterOpen, setFilterOpen] = useState(false);
-
   const { data: platforms } = useQuery({
     queryKey: ["igdb-platforms"],
     queryFn: fetchPlatformsFromIGDB,
   });
+
+  const { data: genres } = useQuery({
+    queryKey: ["igdb-genres"],
+    queryFn: fetchAllGenreFromIGDB,
+  });
+
+  const filterPlatformIds =
+    platforms && platformsFilter
+      ? platforms
+          .filter((platform) => platformsFilter.includes(platform.slug))
+          .map((platform) => platform.id)
+      : undefined;
+
+  const genreFilterIds =
+    genres && genresFilter
+      ? genres
+          .filter((genre) => genresFilter.includes(genre.slug))
+          .map((genre) => genre.id)
+      : undefined;
+
+  const isReadyToFetch =
+    (!platformsFilter || platforms !== undefined) &&
+    (!genresFilter || genres !== undefined);
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
-      queryKey: ["games-infinite", platformsFilter],
+      queryKey: ["games-infinite", filterPlatformIds, genreFilterIds],
       queryFn: ({ pageParam }) => {
-        let platformsFilterIds: number[] | undefined = undefined;
-        if (platformsFilter) {
-          const selectedPlatforms = platforms?.filter(
-            (platform: PlatformFromIGDB) =>
-              platformsFilter.includes(platform.slug),
-          );
-          platformsFilterIds = selectedPlatforms?.map(
-            (platform) => platform.id,
-          );
-        }
-        return fetchGames(undefined, 50, pageParam, platformsFilterIds);
+        return fetchGames(
+          undefined,
+          50,
+          pageParam,
+          filterPlatformIds && filterPlatformIds?.length > 0 ? filterPlatformIds : undefined,
+          genreFilterIds && genreFilterIds?.length > 0 ? genreFilterIds : undefined,
+        );
       },
       getNextPageParam: (lastPage) => lastPage.nextCursor,
       initialPageParam: "",
+      enabled: isReadyToFetch,
     });
   const { loadMoreRef } = useInfiniteScroll({
     callback: fetchNextPage,
