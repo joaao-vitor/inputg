@@ -9,10 +9,8 @@ import { FiltersSheet } from "./_components/filters-sheet";
 import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
 import { fetchPlatformsFromIGDB } from "@/lib/dal/fetch-platform";
-import { PlatformFromIGDB } from "@/types/platform.types";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { fetchAllGenreFromIGDB } from "@/lib/dal/fetch-genre";
-import { GenreFromIGDB } from "@/types/genre.types";
 
 export default function Page() {
   const [filterOpen, setFilterOpen] = useState(false);

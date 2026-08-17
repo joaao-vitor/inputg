@@ -1,5 +1,4 @@
 import { GameCard } from "@/components/game-card";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -7,10 +6,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Heart, Star } from "lucide-react";
-import Image from "next/image";
+import { getPopularGames } from "@/lib/services/game.service";
 
-export const PopularGames = () => {
+export const PopularGames = async () => {
+  const games = await getPopularGames(10);
   return (
     <section className="p-6">
       <h2 className="text-3xl font-bold border-b-2 inline border-primary pb-1 pr-5">
@@ -27,12 +26,12 @@ export const PopularGames = () => {
           className="w-full"
         >
           <CarouselContent className="relative gap-4">
-            {Array.from({ length: 10 }).map((_, index) => (
+            {games.map((game) => (
               <CarouselItem
-                key={index}
+                key={game.id}
                 className="basis-1/2 md:basis-1/4 lg:basis-1/7"
               >
-                <GameCard />
+                <GameCard game={game} />
               </CarouselItem>
             ))}
           </CarouselContent>
