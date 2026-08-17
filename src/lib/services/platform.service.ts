@@ -5,7 +5,6 @@ export const getAllPlatformsFromIGDB = async (): Promise<
   PlatformFromIGDB[]
 > => {
   const query = `fields id, name, slug; limit 500; sort name asc;`;
-  // Execute the query and return the results
   const platforms = await fetchOnIGDB("platforms", query);
   return platforms;
 };
