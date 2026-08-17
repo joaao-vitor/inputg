@@ -1,7 +1,11 @@
 "use server";
 import { headers } from "next/headers";
 import { getGameStatusByUserAndGame } from "../services/game-status.service";
-import { getGameBySlug, getGamesFromIGDB } from "../services/game.service";
+import {
+  getGameBySlug,
+  getGamesFromIGDB,
+  getPopularGames,
+} from "../services/game.service";
 import { auth } from "../auth";
 import { GameWithUserStatus } from "@/types/game.types";
 
@@ -30,4 +34,9 @@ export const fetchGameAsUser = async (
     game.id,
   );
   return { ...game, userGameStatus };
+};
+
+export const fetchPopularGames = async (take: number = 10) => {
+  const games = await getPopularGames(take);
+  return games;
 };

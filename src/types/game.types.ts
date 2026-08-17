@@ -39,3 +39,17 @@ export type GameFromIGDB = {
     image_id: string;
   }[];
 };
+
+export type PopularGameSummary = {
+  id: number;
+  name: string;
+  slug: string;
+  igdbImageId: string;
+  averageRating: number;
+  averageRatingAllTime: number;
+  totalRatingsAllTime: number;
+  totalLikesAllTime: number;
+  totalRatings : number;
+  totalLikes: number;
+  trendingScore: number;
+};
