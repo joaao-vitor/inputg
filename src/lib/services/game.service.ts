@@ -1,7 +1,11 @@
 import prisma from "../prisma";
 import { fetchOnIGDB } from "./igdb.service";
 import { IGDBGame } from "@/types/igdb.types";
-import { GameFromIGDB, GameWithRelations } from "@/types/game.types";
+import {
+  GameFromIGDB,
+  GameWithRelations,
+  PopularGameSummary,
+} from "@/types/game.types";
 import { cacheTag } from "next/cache";
 
 export const getGamesFromIGDB = async (
@@ -167,4 +171,73 @@ export const getGameByIGDBId = async (
   }
 
   return game;
+};
+export const getPopularGames = async (
+  take: number = 10,
+): Promise<PopularGameSummary[]> => {
+  const games = await prisma.$queryRaw<PopularGameSummary[]>`
+    WITH recent_ratings AS (
+      SELECT 
+        "gameId", 
+        AVG(rating)::FLOAT as avg_rating, 
+        COUNT(*)::INT as total_ratings 
+      FROM user_game 
+      WHERE "updatedAt" >= NOW() - INTERVAL '30 days' 
+        AND rating > 0 
+      GROUP BY "gameId"
+    ),
+
+    recent_likes AS (
+      SELECT 
+        "gameId", 
+        COUNT(*)::INT as total_likes 
+      FROM game_like 
+      WHERE "createdAt" >= NOW() - INTERVAL '30 days' 
+      GROUP BY "gameId"
+    ),
+
+    all_likes AS (
+      SELECT 
+        "gameId", 
+        COUNT(*)::INT as total_likes 
+      FROM game_like 
+      GROUP BY "gameId"
+    ),
+    
+    avg_rating_all_time AS (
+      SELECT 
+        "gameId", 
+        AVG(rating)::FLOAT as avg_rating_all_time, 
+        COUNT(*)::INT as total_ratings_all_time 
+      FROM user_game 
+      WHERE rating > 0 
+      GROUP BY "gameId"
+    )
+
+    SELECT
+      g.id, g.name, g.slug, g."igdbImageId",
+      COALESCE(r.avg_rating, 0) as "averageRating",
+      COALESCE(r.total_ratings, 0) as "totalRatings",
+      COALESCE(l.total_likes, 0) as "totalLikes",
+      COALESCE(a.avg_rating_all_time, 0) as "averageRatingAllTime",
+      COALESCE(a.total_ratings_all_time, 0) as "totalRatingsAllTime",
+      COALESCE(al.total_likes, 0) as "totalLikesAllTime",
+      (
+        (COALESCE(r.avg_rating, 0) * COALESCE(r.total_ratings, 0)) + 
+        (COALESCE(l.total_likes, 0) * 2) 
+      ) as "trendingScore"
+    FROM game g
+    LEFT JOIN recent_ratings r ON g.id = r."gameId"
+    LEFT JOIN recent_likes l ON g.id = l."gameId"
+    LEFT JOIN avg_rating_all_time a ON g.id = a."gameId"
+    LEFT JOIN all_likes al ON g.id = al."gameId"
+    ORDER BY 
+      "trendingScore" DESC,                 
+      "totalRatingsAllTime" DESC,           
+      "totalLikesAllTime" DESC,             
+      g.name ASC                            
+    LIMIT ${take};
+  `;
+
+  return games;
 };

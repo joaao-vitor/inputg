@@ -31,3 +31,8 @@ export const fetchGameAsUser = async (
   );
   return { ...game, userGameStatus };
 };
+
+export const fetchPopularGames = async (take: number = 10) => {
+  const games = await getGamesFromIGDB(undefined, take);
+  return games;
+};
