@@ -9,8 +9,10 @@ export const fetchGames = async (
   search?: string,
   take: number = 5,
   cursor?: string,
+  platforms?: number[],
+  genres?: number[],
 ) => {
-  const games = await getGamesFromIGDB(search, take, cursor);
+  const games = await getGamesFromIGDB(search, take, cursor, platforms, genres);
   return games;
 };
 
