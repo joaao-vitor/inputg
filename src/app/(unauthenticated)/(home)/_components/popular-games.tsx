@@ -7,7 +7,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { fetchPopularGames } from "@/lib/dal/fetch-game";
-
+  
 export const PopularGames = async () => {
   const games = await fetchPopularGames(10);
   return (

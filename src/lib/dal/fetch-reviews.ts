@@ -1,6 +1,7 @@
 "use server";
 import { headers } from "next/headers";
 import {
+  getPopularReviews,
   getReviewById,
   getReviewsByGameId,
   getReviewsByGameSlug,
@@ -50,4 +51,10 @@ export const fetchReviewById = async ({ reviewId }: { reviewId: string }) => {
 
   const response = await getReviewById(reviewId, session?.user?.id);
   return response;
+};
+
+export const fetchPopularReviews = async ({ take = 5 }) => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const reviews = await getPopularReviews(take, session?.user?.id);
+  return reviews;
 };

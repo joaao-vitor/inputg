@@ -136,16 +136,7 @@ export const getReviewsByGameId = async ({
     nextCursor = nextItem?.id;
   }
 
-  const formattedReviews = reviews.map((review) => {
-    const { _count, reviewLikes, ...rest } = review;
-    return {
-      ...rest,
-      likesCount: _count?.reviewLikes ?? 0,
-      isLiked: Array.isArray(reviewLikes) && reviewLikes.length > 0,
-    };
-  });
-
-  return { reviews: formattedReviews, nextCursor };
+  return { reviews: reviews.map((r) => formatReview(r)), nextCursor };
 };
 
 export const getReviewById = async (
@@ -231,4 +222,96 @@ export const deleteReviewById = async (reviewId: string, userId: string) => {
       },
     },
   });
+};
+
+export const getPopularReviews = async (
+  take: number = 5,
+  currentUserId?: string,
+): Promise<ReviewWithRelationsAndGame[]> => {
+  const baseQueryOptions = {
+    orderBy: {
+      reviewLikes: {
+        _count: "desc" as const,
+      },
+    },
+    take,
+    include: {
+      game: {
+        select: {
+          id: true,
+          igdbImageId: true,
+          name: true,
+          slug: true,
+          releaseDate: true,
+        },
+      },
+      user: {
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          image: true,
+        },
+      },
+      userGame: {
+        select: {
+          rating: true,
+          status: true,
+        },
+      },
+      platform: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      reviewLikes: currentUserId
+        ? {
+            where: {
+              userId: currentUserId,
+            },
+          }
+        : false,
+      _count: {
+        select: {
+          reviewLikes: true,
+        },
+      },
+    },
+  };
+
+  let reviews = await prisma.review.findMany({
+    ...baseQueryOptions,
+    where: {
+      updatedAt: {
+        gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // last 7 days
+      },
+    },
+  });
+
+  if (reviews.length === 0)
+    reviews = await prisma.review.findMany({
+      ...baseQueryOptions,
+      where: {
+        updatedAt: {
+          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // last 30 days
+        },
+      },
+    });
+
+  if (reviews.length === 0)
+    reviews = await prisma.review.findMany({
+      ...baseQueryOptions,
+    }); // all time
+
+  return reviews.map((review) => formatReview(review));
+};
+
+const formatReview = (review: any) => {
+  const { _count, reviewLikes, ...rest } = review;
+  return {
+    ...rest,
+    likesCount: _count?.reviewLikes ?? 0,
+    isLiked: Array.isArray(reviewLikes) && reviewLikes.length > 0,
+  };
 };

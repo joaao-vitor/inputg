@@ -36,8 +36,8 @@ export type ReviewWithRelationsAndGame = ReviewWithRelations & {
     name: string;
     igdbImageId: string | null;
     slug: string;
-    screenshotsIds: string[];
-    igdbId: number | null;
+    screenshotsIds?: string[];
+    igdbId?: number | null;
     releaseDate: Date | null;
   };
 };
