@@ -136,7 +136,7 @@ export const getReviewsByGameId = async ({
     nextCursor = nextItem?.id;
   }
 
-  return { reviews: reviews.map(r => formatReview(r)), nextCursor };
+  return { reviews: reviews.map((r) => formatReview(r)), nextCursor };
 };
 
 export const getReviewById = async (
@@ -228,18 +228,13 @@ export const getPopularReviews = async (
   take: number = 5,
   currentUserId?: string,
 ): Promise<ReviewWithRelationsAndGame[]> => {
-  const reviews = await prisma.review.findMany({
+  const baseQueryOptions = {
     orderBy: {
       reviewLikes: {
-        _count: "desc",
+        _count: "desc" as const,
       },
     },
     take,
-    where: {
-      updatedAt: {
-        gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // last 7 days
-      },
-    },
     include: {
       game: {
         select: {
@@ -283,8 +278,33 @@ export const getPopularReviews = async (
         },
       },
     },
+  };
+
+  let reviews = await prisma.review.findMany({
+    ...baseQueryOptions,
+    where: {
+      updatedAt: {
+        gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // last 7 days
+      },
+    },
   });
-  return reviews.map(review => formatReview(review));
+
+  if (reviews.length === 0)
+    reviews = await prisma.review.findMany({
+      ...baseQueryOptions,
+      where: {
+        updatedAt: {
+          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // last 30 days
+        },
+      },
+    });
+
+  if (reviews.length === 0)
+    reviews = await prisma.review.findMany({
+      ...baseQueryOptions,
+    }); // all time
+
+  return reviews.map((review) => formatReview(review));
 };
 
 const formatReview = (review: any) => {
